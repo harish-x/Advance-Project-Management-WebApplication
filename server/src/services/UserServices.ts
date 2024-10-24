@@ -11,13 +11,7 @@ type UserParamsT = {
   teamId: number;
 };
 class UserServices {
-  async CreateUser({
-    userName,
-    email,
-    password,
-    profilePicture,
-    teamId,
-  }: UserParamsT) {
+  async CreateUser({ userName, email, password, profilePicture, teamId, }: UserParamsT) {
     try {
       const hashPassword = await bcrypt.hash(password, 10);
       const user = await prisma.user.create({
@@ -50,6 +44,15 @@ class UserServices {
       process.env.REFRESHTOKEN_SECRET_KEY as string,
       { expiresIn: process.env.REFRESH_TOKENEXPIRES }
     );
+  }
+  async finduserBytoken(decode: {  userId: string, userRole: string  }) {
+   const user = await prisma.user.findFirst({
+      where: {
+        userId:decode.userId,
+        role:decode.userRole
+      }
+   })
+    return user;
   }
 }
 
