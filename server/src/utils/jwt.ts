@@ -11,5 +11,9 @@ export const sendUserToken = async (user: any, statusCode: number, res: Response
       path: "/",
       secure: false,
     };
-    res.json({...user,accessToken}).cookie("jwt",refreshToken,refreshTokenOptions ).status(statusCode)
+    res
+      .status(statusCode)
+       .cookie("jwt", refreshToken, refreshTokenOptions)
+      .json({ ...user, accessToken })
+     
 };

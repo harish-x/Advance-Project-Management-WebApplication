@@ -23,12 +23,19 @@ class UserServices {
           teamId,
         },
       });
+ console.log(user);
       if (user) {
         const { password, ...rest } = user;
+       
+        
         return rest;
+        
       }
     } catch (error: any) {
+
+      console.log(error);
       throw new Error(error);
+      
     }
   }
   generateAccessToken(userId: string, userRole: string) {

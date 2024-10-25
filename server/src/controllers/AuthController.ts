@@ -5,6 +5,7 @@ import ErrorHandler from "../utils/ErrorHandler";
 import UserServices from "../services/UserServices";
 import { sendUserToken } from "../utils/jwt";
 import jwt from "jsonwebtoken"
+import { log } from "console";
 
 
 export const register = catchAsyncError(

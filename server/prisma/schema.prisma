@@ -19,7 +19,7 @@ model User {
   email          String
   password       String
   profilePicture String?
-  teamId         Int
+  teamId         Int?
   role           String  @default("member")
 
   authoredTasks  Task[]           @relation("TaskAuthor")

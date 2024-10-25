@@ -6,14 +6,13 @@ import cookieParser from "cookie-parser"
 import helmet from "helmet"
 import morgan from "morgan"
 import errorHandler from "./middlewares/error"
+import authRouter from "./routers/AuthRouter"
 
 const app = exppress()
 
 app.use(exppress.json())
 app.use(cookieParser())
 
-app.use(helmet())
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }))
 app.use(morgan("common"))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -25,7 +24,7 @@ app.use(
     exposedHeaders: ["set-cookie"],
   })
 );
-
+app.use('/api/auth/',authRouter)
 
 const port = process.env.PORT || 8080
 app.use(errorHandler)
