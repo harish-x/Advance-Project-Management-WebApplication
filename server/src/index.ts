@@ -7,7 +7,7 @@ import helmet from "helmet"
 import morgan from "morgan"
 import errorHandler from "./middlewares/error"
 import authRouter from "./routers/AuthRouter"
-
+dotenv.config()
 const app = exppress()
 
 app.use(exppress.json())
@@ -16,7 +16,6 @@ app.use(cookieParser())
 app.use(morgan("common"))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(cors())
 app.use(
   cors({
     credentials: true,
@@ -26,7 +25,7 @@ app.use(
 );
 app.use('/api/auth/',authRouter)
 
-const port = process.env.PORT || 8080
+const port = process.env.PORT
 app.use(errorHandler)
 app.listen(port, () => {
     console.log("app is running on port "+port)

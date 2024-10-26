@@ -16,7 +16,7 @@ datasource db {
 model User {
   userId         String  @id @default(cuid())
   userName       String
-  email          String
+  email          String  @unique
   password       String
   profilePicture String?
   teamId         Int?

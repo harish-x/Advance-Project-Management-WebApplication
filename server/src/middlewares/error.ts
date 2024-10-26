@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from "express";
-
+import { Prisma } from "@prisma/client";
 
 interface CustomError extends Error {
   statusCode?: number;
-  code?: number;
+  code?: string;
   errors?: {
     [key: string]: { message: string };
   };
   path?: string;
-  keyValue?: Record<string, unknown>;
+  meta?: Record<string, any>;
 }
 
 const errorHandler = (
@@ -17,50 +17,47 @@ const errorHandler = (
   res: Response,
   next: NextFunction
 ): void => {
-  err.statusCode = err.statusCode || 500;
+  let statusCode = err.statusCode || 500;
+  let message = err.message || "Internal server error";
 
-  if (process.env.NODE_ENV === "development") {
-    res.status(err.statusCode).json({
-      success: false,
-      message: err.message,
-      stack: err.stack,
-    });
-  } else if (process.env.NODE_ENV === "production") {
-    let message = err.message || "Internal server error";
-    let error = new Error(message) as CustomError;
-    error.statusCode = err.statusCode;
-
-    if (err.name === "ValidationError" && err.errors) {
-      message = Object.values(err.errors)
-        .map((value) => value.message)
-        .join(", ");
-      error = new Error(message);
-      error.statusCode = 400;
+  // Handling specific Prisma errors
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    switch (err.code) {
+      case "P2002":
+        message = `Duplicate field value: ${Object.keys(err.meta?.target || {}).join(", ")}`;
+        statusCode = 409;
+        break;
+      case "P2025":
+        // Record not found
+        message = "Resource not found";
+        statusCode = 404;
+        break;
+      default:
+        message = "Database request error";
+        statusCode = 400;
+        break;
     }
-
-    if (err.name === "CastError" && err.path) {
-      message = `Resource not found: ${err.path}`;
-      error = new Error(message);
-      error.statusCode = 400;
-    }
-
-    if (err.code === 11000 && err.keyValue) {
-      message = `Duplicate key error: ${Object.keys(err.keyValue).join(", ")}`;
-      error = new Error(message);
-      error.statusCode = 400;
-    }
-
-    if (err.name === "JsonWebTokenError") {
-      message = "Invalid token";
-      error = new Error(message);
-      error.statusCode = 400;
-    }
-
-    res.status(error.statusCode || 500).json({
-      success: false,
-      message: error.message || "Internal server error",
-    });
   }
+
+
+  else if (err.name === "ValidationError" && err.errors) {
+    message = Object.values(err.errors)
+      .map((value) => value.message)
+      .join(", ");
+    statusCode = 400;
+  }
+
+  // JWT and other specific errors
+  else if (err.name === "JsonWebTokenError") {
+    message = "Invalid token";
+    statusCode = 400;
+  }
+
+  res.status(statusCode).json({
+    success: false,
+    message,
+  });
 };
 
 export default errorHandler;
+

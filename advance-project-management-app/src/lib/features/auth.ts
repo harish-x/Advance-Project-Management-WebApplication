@@ -16,7 +16,15 @@ export const authApiSlice = reAuthQuery.injectEndpoints({
         body: credentials,
       }),
     }),
+    test: builder.query({
+      query: () => "/auth/test",
+    }),
   }),
 });
 
-export const { useRegisterUserMutation, useLoginUserMutation } = authApiSlice;
+
+export const { 
+  useRegisterUserMutation, 
+  useLoginUserMutation, 
+  useTestQuery 
+} = authApiSlice;

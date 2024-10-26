@@ -7,20 +7,28 @@ import UserServices from "../services/UserServices";
 const isAuthenticatedUser = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const authHeader = req.headers.authorization;
-      if (authHeader && authHeader.startsWith("Bearer ")) {
-        const token = authHeader.split(" ")[1];
-        if (!token) return next(new ErrorHandler("missing token", 401));
+      const authHeader = req.headers.authorization || req.headers.Authorization;
+      const tokenHeader = Array.isArray(authHeader)
+        ? authHeader[0]
+        : authHeader;
+      if (tokenHeader && tokenHeader.startsWith("Bearer ")) {
+        const token = tokenHeader.split(" ")[1];
 
+        if (!token) {
+          return next(new ErrorHandler("missing token", 401));
+        }
         jwt.verify(
           token,
-          process.env.ACCESS_TOKEN_SECRET as string,
+          process.env.ACCESSTOKEN_SECRET_KEY as string,
           async (err: any, decoded: any) => {
+            console.log(err);
             if (err) {
               return next(new ErrorHandler("Invalid or expired token", 403));
             }
+
             try {
               const user = await UserServices.finduserBytoken(decoded);
+
               if (!user) {
                 return next(new ErrorHandler("User not found", 404));
               }
@@ -30,6 +38,8 @@ const isAuthenticatedUser = catchAsyncError(
             }
           }
         );
+      } else {
+        return next(new ErrorHandler("Authentication failed", 401));
       }
     } catch (error) {
       return next(new ErrorHandler("Authentication failed", 500));

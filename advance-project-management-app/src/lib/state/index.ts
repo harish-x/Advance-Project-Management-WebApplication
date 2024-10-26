@@ -17,14 +17,14 @@ export const globalSlice = createSlice({
     name: "global",
     initialState,
     reducers: {
-        setCredentials: (state, action) => {
-            const { user, token } = action.payload;
+      setCredentials: (state, action) => {
+        const { accessToken, ...user } = action.payload;
               state.user = user;
               state.isAuth = true;
-              state.accessToken = token;
+              state.accessToken = accessToken;
         },
         logOut: (state, action:PayloadAction) => {
-      state.user = null;
+            state.user = null;
             state.accessToken = null;
             state.isAuth = false;
     },
