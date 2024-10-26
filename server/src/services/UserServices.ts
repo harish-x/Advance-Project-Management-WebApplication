@@ -23,19 +23,15 @@ class UserServices {
           teamId,
         },
       });
- console.log(user);
+      console.log(user);
       if (user) {
         const { password, ...rest } = user;
-       
-        
+
         return rest;
-        
       }
     } catch (error: any) {
-
       console.log(error);
       throw new Error(error);
-      
     }
   }
   generateAccessToken(userId: string, userRole: string) {
@@ -52,14 +48,31 @@ class UserServices {
       { expiresIn: process.env.REFRESH_TOKENEXPIRES }
     );
   }
-  async finduserBytoken(decode: {  userId: string, userRole: string  }) {
-   const user = await prisma.user.findFirst({
+  async finduserBytoken(decode: { userId: string; userRole: string }) {
+    const user = await prisma.user.findFirst({
       where: {
-        userId:decode.userId,
-        role:decode.userRole
-      }
-   })
+        userId: decode.userId,
+        role: decode.userRole,
+      },
+    });
     return user;
+  }
+
+  async isValidUser(email: string, password: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+    if (!user) {
+      return false;
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return false;
+    }
+    const { password: pswd, ...rest } = user;
+    return rest;
   }
 }
 

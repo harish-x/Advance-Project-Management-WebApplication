@@ -28,6 +28,20 @@ export const register = catchAsyncError(
   }
 );
 
+export const login = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return next(new ErrorHandler("every fields are required", 402)); 
+    }
+    const user = await UserServices.isValidUser(email, password);
+    if (!user) {
+      return next(new ErrorHandler("invalid credentials", 401));
+    }
+    sendUserToken(user, 200, res);
+  }
+);
+
 export const logout = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     res.clearCookie("jwt", { path: "/" });
