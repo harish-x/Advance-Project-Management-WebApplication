@@ -23,6 +23,8 @@ model User {
   role           String  @default("member")
   resetPasswordToken String?
   resetPasswordTokenExpired DateTime?
+  otp String?
+  otpExpired DateTime?
 
   authoredTasks  Task[]           @relation("TaskAuthor")
   assignedTasks  Task[]           @relation("TaskAssignee")
