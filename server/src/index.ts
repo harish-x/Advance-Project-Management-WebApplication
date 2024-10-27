@@ -7,6 +7,7 @@ import helmet from "helmet"
 import morgan from "morgan"
 import errorHandler from "./middlewares/error"
 import authRouter from "./routers/AuthRouter"
+// import "./types/express.d.ts"
 dotenv.config()
 const app = exppress()
 

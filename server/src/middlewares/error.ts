@@ -11,12 +11,7 @@ interface CustomError extends Error {
   meta?: Record<string, any>;
 }
 
-const errorHandler = (
-  err: CustomError,
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+const errorHandler = ( err: CustomError, req: Request, res: Response, next: NextFunction ): void => {
   let statusCode = err.statusCode || 500;
   let message = err.message || "Internal server error";
 
@@ -28,7 +23,6 @@ const errorHandler = (
         statusCode = 409;
         break;
       case "P2025":
-        // Record not found
         message = "Resource not found";
         statusCode = 404;
         break;

@@ -32,7 +32,7 @@ const isAuthenticatedUser = catchAsyncError(
               if (!user) {
                 return next(new ErrorHandler("User not found", 404));
               }
-              req.user = user;
+               req.user = user;
               next();
             } catch (error) {
               return next(new ErrorHandler("Authentication failed", 500));

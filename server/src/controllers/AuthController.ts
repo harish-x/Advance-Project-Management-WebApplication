@@ -80,7 +80,8 @@ export const getAccessToken = catchAsyncError(
 );
 
 export const test = catchAsyncError( async (req: Request, res: Response, next: NextFunction) => {
-
-   res.status(200).json({ message: "working" });
+let user = req.user
+  res.status(200).json({ message: "working",user});
+  
 }
 )

@@ -1,4 +1,3 @@
-// types/express.d.ts
 import { User } from '@prisma/client';
 
 declare global {
