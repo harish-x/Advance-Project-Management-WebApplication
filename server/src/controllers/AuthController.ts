@@ -1,19 +1,17 @@
-import { PrismaClient } from "@prisma/client";
 import catchAsyncError from "../middlewares/catchAsyncError";
 import { NextFunction, Request, Response } from "express";
 import ErrorHandler from "../utils/ErrorHandler";
 import UserServices from "../services/UserServices";
 import { sendUserToken } from "../utils/jwt";
 import jwt from "jsonwebtoken";
-import { log } from "console";
+import sendMail from "../utils/mailService";
 
 export const register = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const { userName, email, password, profilePicture, teamId } = req.body;
 
     if (userName === "" || email === "" || password === "") {
-       return next( new ErrorHandler("every fields are required", 402));
-      
+      return next(new ErrorHandler("every fields are required", 402));
     }
     const user = await UserServices.CreateUser({
       userName,
@@ -24,7 +22,6 @@ export const register = catchAsyncError(
     });
 
     sendUserToken(user, 201, res);
-     
   }
 );
 
@@ -32,7 +29,7 @@ export const login = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     if (!email || !password) {
-      return next(new ErrorHandler("every fields are required", 402)); 
+      return next(new ErrorHandler("every fields are required", 402));
     }
     const user = await UserServices.isValidUser(email, password);
     if (!user) {
@@ -79,9 +76,53 @@ export const getAccessToken = catchAsyncError(
   }
 );
 
-export const test = catchAsyncError( async (req: Request, res: Response, next: NextFunction) => {
-let user = req.user
-  res.status(200).json({ message: "working",user});
-  
-}
-)
+export const test = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    let user = req.user;
+    res.status(200).json({ message: "working", user });
+  }
+);
+
+export const forgotPassword = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+    if (!email) {
+      return next(new ErrorHandler("email is required", 400));
+    }
+
+    const user = await UserServices.findUserByEmail(email);
+    if (!user) {
+      return next(new ErrorHandler("user not found", 404));
+    }
+
+    const resetToken = UserServices.generateResetPasswordToken(user.userId);
+    try {
+      const resetUrl = `${process.env.FRONTENDURL}/api/resetpassword/${resetToken}`;
+      const message = `<h1>Reset Password</h1>
+  <p>Here the reset password link <a href=${resetUrl} target="_blank">click here</a></p> `;
+      const subject = "Reset password for Jokar creations";
+      sendMail({ email, subject, message });
+      res.status(200).json({ message: "reset token sent to your email" });
+    } catch (error) {
+      res.status(500).json({ message: "something went wrong" });
+    }
+  }
+);
+
+export const resetPassword = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { password } = req.body;
+    const token = req.params.resetToken;
+    if (!password) {
+      return next(new ErrorHandler("password is required", 400));
+    }
+
+    const resetPassword =
+      await UserServices.isvalidResetPasswordTokenandUpdateIf(token, password);
+    if (!resetPassword) {
+      return next(new ErrorHandler("invalid token or expired", 400));
+    }
+
+    res.status(200).json({ message: "password reset successfully" });
+  }
+);

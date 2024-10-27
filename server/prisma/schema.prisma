@@ -21,6 +21,8 @@ model User {
   profilePicture String?
   teamId         Int?
   role           String  @default("member")
+  resetPasswordToken String?
+  resetPasswordTokenExpired DateTime?
 
   authoredTasks  Task[]           @relation("TaskAuthor")
   assignedTasks  Task[]           @relation("TaskAssignee")

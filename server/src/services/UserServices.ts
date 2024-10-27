@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 const prisma = new PrismaClient();
 type UserParamsT = {
@@ -23,9 +24,8 @@ class UserServices {
           teamId,
         },
       });
-      console.log(user);
       if (user) {
-        const { password, ...rest } = user;
+        const { password,resetPasswordToken,resetPasswordTokenExpired, ...rest } = user;
 
         return rest;
       }
@@ -57,6 +57,22 @@ class UserServices {
     });
     return user;
   }
+  async findUserById(userId: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        userId,
+      },
+    });
+    return user;
+  }
+  async findUserByEmail(email: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+    return user;
+  }
 
   async isValidUser(email: string, password: string) {
     const user = await prisma.user.findFirst({
@@ -71,8 +87,49 @@ class UserServices {
     if (!isMatch) {
       return false;
     }
-    const { password: pswd, ...rest } = user;
+    const { password: pswd,resetPasswordToken,resetPasswordTokenExpired, ...rest } = user;
     return rest;
+  }
+
+  async generateResetPasswordToken(userId: string) {
+    const token = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    await prisma.user.update({
+      where: {
+        userId,
+      },
+      data: {
+        resetPasswordToken: hashedToken,
+        resetPasswordTokenExpired: new Date(Date.now() + 10 * 60 * 1000),
+      },
+    });
+    return token;
+  }
+
+  async isvalidResetPasswordTokenandUpdateIf(token: string, password: string) {
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    const user = await prisma.user.findFirst({
+      where: {
+        resetPasswordToken: hashedToken,
+        resetPasswordTokenExpired: {
+          gte: new Date(Date.now()),
+        },
+      },
+    });
+    if (!user) {
+      return false;
+    }
+    await prisma.user.update({
+      where: {
+        userId: user.userId,
+      },
+      data: {
+        password: await bcrypt.hash(password, 10),
+        resetPasswordToken: null,
+        resetPasswordTokenExpired: null,
+      },
+    });
+    return user;
   }
 }
 
