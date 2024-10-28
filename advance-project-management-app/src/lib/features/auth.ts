@@ -1,3 +1,4 @@
+import { use } from "react";
 import { reAuthQuery } from "./authQuery";
 
 export const authApiSlice = reAuthQuery.injectEndpoints({
@@ -19,12 +20,21 @@ export const authApiSlice = reAuthQuery.injectEndpoints({
     test: builder.query({
       query: () => "/auth/test",
     }),
+    loginWithOtp: builder.mutation({
+      query: (data) => ({
+        url: "/auth/loginwithotp",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    verifyOtp: builder.mutation({
+      query: (data) => ({
+        url: "/auth/verifyotp",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
-
-export const { 
-  useRegisterUserMutation, 
-  useLoginUserMutation, 
-  useTestQuery 
-} = authApiSlice;
+export const { useRegisterUserMutation, useLoginUserMutation, useTestQuery, useLoginWithOtpMutation, useVerifyOtpMutation, } = authApiSlice;

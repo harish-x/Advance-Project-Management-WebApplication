@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-import { useLoginUserMutation } from "@/lib/features/auth";
+import React, { useEffect } from "react";
+import { useLoginUserMutation,useLoginWithOtpMutation,useVerifyOtpMutation } from "@/lib/features/auth";
 import { useAppDispatch } from "../store/redux";
 import { setCredentials } from "@/lib/state";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import Image from "next/image";
 import { CircleUserRound } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import Spinner from "./Spinner";
+import { useRouter } from "next/navigation";
 import {
   InputOTP,
   InputOTPGroup,
@@ -16,14 +18,17 @@ import {
 } from "@/components/ui/input-otp";
 
 const Login = () => {
+  const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [opt, setOpt] = React.useState("");
+  const [otp, setOtp] = React.useState("");
   const [isEmail, setIsEmail] = React.useState(false);
   const [otpSent, setOtpSent] = React.useState(false);
   const dispatch = useAppDispatch();
   const { toast } = useToast();
-  const [loginUser] = useLoginUserMutation();
+  const [loginUser, { isLoading: isLoginLoading, isSuccess }] = useLoginUserMutation();
+  const [loginWithOtp, { isLoading: isLoginWithOtpLoading }] = useLoginWithOtpMutation();
+  const [verifyOtp, { isLoading: isVerifyOtpLoading } ] = useVerifyOtpMutation()
 
   async function handleSubmit() {
     try {
@@ -34,7 +39,8 @@ const Login = () => {
           toast({
             title: "Signed in successfully",
             description: "Welcome back !",
-          });
+          })
+          router.push('/dashboard');
         });
     } catch (err) {
       toast({
@@ -44,9 +50,36 @@ const Login = () => {
       });
     }
   }
-  function handleSendOTP() {
+  async function handleSendOTP() {
+   await loginWithOtp({email}).unwrap();
     setOtpSent(true);
   }
+
+  useEffect(() => {
+    if (otp.length === 6) {
+      handleVerifyOTP()
+    }
+  },[otp])
+async function handleVerifyOTP() {
+  try {
+    await verifyOtp({ email, otp })
+      .unwrap()
+      .then((data) => {
+        dispatch(setCredentials(data));
+        toast({
+          title: "Signed in successfully",
+          description: "Welcome back !",
+        })
+        router.push("/dashboard");
+      });
+  } catch (err) {
+    toast({
+      variant: "destructive",
+      title: "Signed in Failed",
+      description: "Email or password is incorrect",
+    });
+  }
+}
 
   return (
     <div className="flex flex-col gap-2 bg-opacity-80 bg-backgroundfw p-20 transition duration-150 ease-in-out rounded shadow-white/[0.25] border border-white/[0.12] w-2/3">
@@ -75,8 +108,19 @@ const Login = () => {
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Button onClick={handleSubmit} variant={"secondary"}>
-              Sing up
+            <Button
+              onClick={handleSubmit}
+              variant={"secondary"}
+              disabled={isLoginLoading}
+              className="relative"
+            >
+              {isLoginLoading ? (
+                <div className="w-5 absolute h-5">
+                  <Spinner />
+                </div>
+              ) : (
+                "Sing up"
+              )}
             </Button>
           </>
         ) : (
@@ -88,8 +132,8 @@ const Login = () => {
                   placeholder="Email"
                   onChange={(e) => setEmail(e.target.value)}
                 />
-                <Button variant={"secondary"} onClick={handleSendOTP}>
-                  Send OPT
+                <Button variant={"secondary"} onClick={handleSendOTP} disabled={isLoginWithOtpLoading}>
+                  {isLoginWithOtpLoading ? <Spinner /> : "Send otp"}
                 </Button>
               </>
             ) : (
@@ -97,8 +141,8 @@ const Login = () => {
                 <InputOTP
                   maxLength={6}
                   containerClassName="w-full mx-auto text-white"
-                  value={opt}
-                  onChange={(e) => setOpt(e)}
+                  value={otp}
+                  onChange={(e) => setOtp(e)}
                 >
                   <InputOTPGroup className="flex items-center justify-center mx-auto">
                     <InputOTPSlot index={0} />

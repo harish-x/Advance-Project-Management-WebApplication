@@ -1,7 +1,6 @@
 import express from "express";
 import { forgotPassword, getAccessToken, login, logout, register, resetPassword, sendOtp, test, verifyOtp } from "../controllers/AuthController";
 import isAuthenticatedUser from "../middlewares/isAuthenticatedUser";
-
 const router = express.Router()
 
 router.route('/register').post(register)
