@@ -1,6 +1,10 @@
 "use client";
 import React, { useEffect } from "react";
-import { useLoginUserMutation,useLoginWithOtpMutation,useVerifyOtpMutation } from "@/lib/features/auth";
+import {
+  useLoginUserMutation,
+  useLoginWithOtpMutation,
+  useVerifyOtpMutation,
+} from "@/lib/features/auth";
 import { useAppDispatch } from "../store/redux";
 import { setCredentials } from "@/lib/state";
 import { Button } from "@/components/ui/button";
@@ -26,9 +30,11 @@ const Login = () => {
   const [otpSent, setOtpSent] = React.useState(false);
   const dispatch = useAppDispatch();
   const { toast } = useToast();
-  const [loginUser, { isLoading: isLoginLoading, isSuccess }] = useLoginUserMutation();
-  const [loginWithOtp, { isLoading: isLoginWithOtpLoading }] = useLoginWithOtpMutation();
-  const [verifyOtp, { isLoading: isVerifyOtpLoading } ] = useVerifyOtpMutation()
+  const [loginUser, { isLoading: isLoginLoading, isSuccess }] =
+    useLoginUserMutation();
+  const [loginWithOtp, { isLoading: isLoginWithOtpLoading }] =
+    useLoginWithOtpMutation();
+  const [verifyOtp, { isLoading: isVerifyOtpLoading }] = useVerifyOtpMutation();
 
   async function handleSubmit() {
     try {
@@ -39,8 +45,8 @@ const Login = () => {
           toast({
             title: "Signed in successfully",
             description: "Welcome back !",
-          })
-          router.push('/dashboard');
+          });
+          router.push("/dashboard");
         });
     } catch (err) {
       toast({
@@ -51,35 +57,35 @@ const Login = () => {
     }
   }
   async function handleSendOTP() {
-   await loginWithOtp({email}).unwrap();
+    await loginWithOtp({ email }).unwrap();
     setOtpSent(true);
   }
 
   useEffect(() => {
     if (otp.length === 6) {
-      handleVerifyOTP()
+      handleVerifyOTP();
     }
-  },[otp])
-async function handleVerifyOTP() {
-  try {
-    await verifyOtp({ email, otp })
-      .unwrap()
-      .then((data) => {
-        dispatch(setCredentials(data));
-        toast({
-          title: "Signed in successfully",
-          description: "Welcome back !",
-        })
-        router.push("/dashboard");
+  }, [otp]);
+  async function handleVerifyOTP() {
+    try {
+      await verifyOtp({ email, otp })
+        .unwrap()
+        .then((data) => {
+          dispatch(setCredentials(data));
+          toast({
+            title: "Signed in successfully",
+            description: "Welcome back !",
+          });
+          router.push("/dashboard");
+        });
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "Signed in Failed",
+        description: "Email or password is incorrect",
       });
-  } catch (err) {
-    toast({
-      variant: "destructive",
-      title: "Signed in Failed",
-      description: "Email or password is incorrect",
-    });
+    }
   }
-}
 
   return (
     <div className="flex flex-col gap-2 bg-opacity-80 bg-backgroundfw p-20 transition duration-150 ease-in-out rounded shadow-white/[0.25] border border-white/[0.12] w-2/3">
@@ -97,7 +103,13 @@ async function handleVerifyOTP() {
       </div>
       <div className="py-2 flex flex-col gap-2">
         {!isEmail ? (
-          <>
+          <div
+            className={`flex flex-col gap-2 ${
+              isEmail ? "hidden" : "block"
+            } transition-all duration-300 transform ${
+              isEmail ? "opacity-0 scale-95" : "opacity-100 scale-100"
+            }`}
+          >
             <Input
               type="email"
               placeholder="Email"
@@ -122,9 +134,15 @@ async function handleVerifyOTP() {
                 "Sing up"
               )}
             </Button>
-          </>
+          </div>
         ) : (
-          <>
+          <div
+            className={`flex flex-col gap-2 ${
+              !isEmail ? "hidden" : "block"
+            } transition-all duration-300 transform ${
+              !isEmail ? "opacity-0 scale-95" : "opacity-100 scale-100"
+            }`}
+          >
             {!otpSent ? (
               <>
                 <Input
@@ -132,7 +150,11 @@ async function handleVerifyOTP() {
                   placeholder="Email"
                   onChange={(e) => setEmail(e.target.value)}
                 />
-                <Button variant={"secondary"} onClick={handleSendOTP} disabled={isLoginWithOtpLoading}>
+                <Button
+                  variant={"secondary"}
+                  onClick={handleSendOTP}
+                  disabled={isLoginWithOtpLoading}
+                >
                   {isLoginWithOtpLoading ? <Spinner /> : "Send otp"}
                 </Button>
               </>
@@ -159,12 +181,12 @@ async function handleVerifyOTP() {
                 </button>
               </div>
             )}
-          </>
+          </div>
         )}
         <div className="flex items-center mt-3 justify-between">
           <Link
             className="text-muted text-xs hover:text-red-500"
-            href={"/email"}
+            href={"/forgotpassword"}
           >
             Forgot Password ?
           </Link>

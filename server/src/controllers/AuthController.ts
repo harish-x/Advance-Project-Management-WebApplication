@@ -155,9 +155,11 @@ export const forgotPassword = catchAsyncError(
       return next(new ErrorHandler("user not found", 404));
     }
 
-    const resetToken = UserServices.generateResetPasswordToken(user.userId);
+    const resetToken = await UserServices.generateResetPasswordToken(user.userId);
+    console.log(resetToken);
+    
     try {
-      const resetUrl = `${process.env.FRONTENDURL}/api/resetpassword/${resetToken}`;
+      const resetUrl = `${process.env.FRONTENDURL}${resetToken}`;
       const message = `<h1>Reset Password</h1>
   <p>Here the reset password link <a href=${resetUrl} target="_blank">click here</a></p> `;
       const subject = "Reset password for Jokar creations";

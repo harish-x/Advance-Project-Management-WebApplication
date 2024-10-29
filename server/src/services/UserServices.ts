@@ -25,7 +25,7 @@ class UserServices {
         },
       });
       if (user) {
-        const { password,resetPasswordToken,resetPasswordTokenExpired, ...rest } = user;
+        const { password,resetPasswordToken,resetPasswordTokenExpired,otp,otpExpired, ...rest } = user;
 
         return rest;
       }
@@ -87,7 +87,7 @@ class UserServices {
     if (!isMatch) {
       return false;
     }
-    const { password: pswd,resetPasswordToken,resetPasswordTokenExpired, ...rest } = user;
+    const { password: pswd,resetPasswordToken,resetPasswordTokenExpired,otp,otpExpired, ...rest } = user;
     return rest;
   }
 

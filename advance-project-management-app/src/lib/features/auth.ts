@@ -1,5 +1,6 @@
 import { use } from "react";
 import { reAuthQuery } from "./authQuery";
+import { url } from "inspector";
 
 export const authApiSlice = reAuthQuery.injectEndpoints({
   endpoints: (builder) => ({
@@ -34,7 +35,29 @@ export const authApiSlice = reAuthQuery.injectEndpoints({
         body: data,
       }),
     }),
+    forgotPassword: builder.mutation({
+      query: (data) => ({
+        url: "/auth/forgotpassword",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    resetPassword: builder.mutation({
+      query: (data: { password: string; resetToken: string }) => ({
+        url: `/auth/resetpassword/${data.resetToken}`,
+        method: "POST",
+        body: {password:data.password}
+      }),
+    }),
   }),
 });
 
-export const { useRegisterUserMutation, useLoginUserMutation, useTestQuery, useLoginWithOtpMutation, useVerifyOtpMutation, } = authApiSlice;
+export const {
+  useRegisterUserMutation,
+  useLoginUserMutation,
+  useTestQuery,
+  useLoginWithOtpMutation,
+  useVerifyOtpMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
+} = authApiSlice;
