@@ -6,8 +6,9 @@ import cookieParser from "cookie-parser"
 import helmet from "helmet"
 import morgan from "morgan"
 import errorHandler from "./middlewares/error"
-import authRouter from "./routers/AuthRouter"
-// import "./types/express.d.ts"
+import authRouter from "./routers/AuthRouter";
+import projectRouter from "./routers/ProjectRouter"
+import taskRouter from "./routers/TaskRouter"
 dotenv.config()
 const app = exppress()
 
@@ -25,6 +26,8 @@ app.use(
   })
 );
 app.use('/api/auth/',authRouter)
+app.use('/api/project/', projectRouter)
+app.use('/api/task/',taskRouter)
 
 const port = process.env.PORT
 app.use(errorHandler)
@@ -32,6 +35,4 @@ app.listen(port, () => {
     console.log("app is running on port "+port)
 })
 
-app.get('/', (req: Request, res: Response) => {
-    res.json({message:"hello"})
-})
+
