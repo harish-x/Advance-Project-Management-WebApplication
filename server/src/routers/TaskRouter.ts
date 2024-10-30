@@ -3,8 +3,8 @@ import { createTask,getTasks,updateTask } from "../controllers/TaskController";
 import express from "express";
 const router = express.Router();
 
-router.route("/getTask").get(getTasks);
+router.route("/gettask").get(getTasks);
 router.route("/createTask").post(createTask);
-router.route("/updateTask").put(updateTask);
+router.route("/:taskId/updateStatus").patch(updateTask);
 
 export default router;

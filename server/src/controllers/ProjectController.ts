@@ -17,17 +17,22 @@ export const getProjects = catchAsyncError(
 
 export const createProject = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, description, startDate, finishedDate, teamId } = req.body;
-    if (!name || !description) {
-      return next(new ErrorHandler("name and description are required", 400));
+    const { name, desc, startDate, finishedDate, teamId } = req.body;
+    if (!name || !desc) {
+      return next(new ErrorHandler("name and desc are required", 400));
     }
-    const project = await ProjectServices.createProject({
+    try {
+      const project = await ProjectServices.createProject({
       name,
-      description,
+      desc,
       startDate,
       finishedDate,
       teamId,
     });
     res.status(201).json({ project });
+    } catch (error) {
+      res.status(500).json({ message: "something went wrong",error });
+    }
+    
   }
 );

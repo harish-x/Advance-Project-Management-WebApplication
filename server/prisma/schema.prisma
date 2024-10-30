@@ -21,6 +21,7 @@ model User {
   profilePicture String?
   teamId         Int?
   role           String  @default("member")
+
   resetPasswordToken String?
   resetPasswordTokenExpired DateTime?
   otp String?
@@ -71,7 +72,6 @@ model Task {
   stateDate       DateTime
   dueDate         DateTime?
   tags            String?
-  desc            String
   status          String           @default("pending")
   priority        String
   points          String?
@@ -97,7 +97,7 @@ model TaskAssignment {
 
 model Attachment {
   id         String  @id @default(cuid())
-  fileUrl    String
+  fileUrl    String?
   fileName   String?
   taskId     String
   uploadedBy String
@@ -107,7 +107,7 @@ model Attachment {
 
 model Comment {
   id     String @id @default(cuid())
-  test   String
+  text   String
   taskId String
   userId String
   task   Task   @relation(fields: [taskId], references: [id])

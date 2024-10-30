@@ -2,6 +2,16 @@ import { use } from "react";
 import { reAuthQuery } from "./authQuery";
 import { url } from "inspector";
 
+
+export interface User{
+   userId         : string; 
+  userName       : string;
+  email          : string; 
+  profilePicture? : string;
+  teamId?: number;
+  role: string;
+}
+
 export const authApiSlice = reAuthQuery.injectEndpoints({
   endpoints: (builder) => ({
     registerUser: builder.mutation({

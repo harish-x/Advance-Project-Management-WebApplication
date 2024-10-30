@@ -32,12 +32,25 @@ class getAllTasks {
     return tasks;
   }
 
-  async createTask({ title, description, status, priority, tags, stateDate, dueDate, projectId, points, authorUserId, assignedUserID, name, }: taskParamsT) {
+  async createTask({
+    title,
+    description,
+    status,
+    priority,
+    tags,
+    stateDate,
+    dueDate,
+    projectId,
+    points,
+    authorUserId,
+    assignedUserID,
+    name,
+  }: taskParamsT) {
     const task = await prisma.task.create({
       data: {
         title,
         name,
-        desc: description,
+        description,
         status,
         priority,
         tags,
@@ -57,7 +70,7 @@ class getAllTasks {
       where: { id: taskId },
       data: {
         status,
-      }
+      },
     });
     return task;
   }
