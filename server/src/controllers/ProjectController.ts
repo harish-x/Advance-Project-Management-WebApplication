@@ -11,7 +11,7 @@ export const getProjects = catchAsyncError(
     if (!projects) {
       return next(new ErrorHandler("project not found", 404));
     }
-    res.status(200).json({ projects });
+    res.status(200).json( projects );
   }
 );
 
@@ -29,7 +29,7 @@ export const createProject = catchAsyncError(
       finishedDate,
       teamId,
     });
-    res.status(201).json({ project });
+    res.status(201).json(project);
     } catch (error) {
       res.status(500).json({ message: "something went wrong",error });
     }

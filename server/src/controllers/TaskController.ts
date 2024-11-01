@@ -10,7 +10,7 @@ export const getTasks = catchAsyncError(
     if (!tasks) {
       return next(new ErrorHandler("task not found", 404));
     }
-    res.status(200).json({ tasks });
+    res.status(201).json( tasks );
   }
 );
 
@@ -47,14 +47,19 @@ export const createTask = catchAsyncError(
       authorUserId,
       assignedUserID,
     });
-    res.status(200).json({ task });
+    res.status(200).json( task );
   }
 );
 
 
 export const updateTask = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { status, taskId } = req.body;
+    const { status } = req.body;
+    const { taskId } = req.params;
+    console.log(status, taskId);
+    if (!status || !taskId) {
+      return next(new ErrorHandler("status is required", 400));
+    }
     const task = await TaskServices.updateTask({ status, taskId });
     if (!task) {
       return next(new ErrorHandler("task not found", 404));

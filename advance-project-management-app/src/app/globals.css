@@ -48,6 +48,11 @@ body {
     --radius: 0.5rem;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 6.3% 56.9%;
+    --todo:#2563eb;
+    --wip:#059669;
+    --review:#9d7706;
+    --complete:#000000;
+
 
   }
 }

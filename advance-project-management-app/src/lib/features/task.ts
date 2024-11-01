@@ -39,6 +39,7 @@ export enum Status {
 }
 
 export enum Priority {
+  Urgent="Urgent",
   High = "High",
   Medium = "Medium",
   Low = "Low",
@@ -55,12 +56,13 @@ export interface Comment {
 export const TaskApi = reAuthQuery.injectEndpoints({
   endpoints: (builder) => ({
     getAllTasks: builder.query<Task[], { projectId: string }>({
-      query: (projectId) => `/task?projectId=${projectId}`,
+      query: (projectId) => `task/gettask?projectId=${projectId.projectId}`,
       providesTags: (result) =>
         result
           ? result.map((task) => ({ type: "Task" as const, id: task.id }))
           : [{ type: "Task", id: "LIST" }],
     }),
+
     createTask: builder.mutation<Task, Partial<Task>>({
       query: (task) => ({
         url: `/task`,
@@ -69,14 +71,18 @@ export const TaskApi = reAuthQuery.injectEndpoints({
       }),
       invalidatesTags: ["Task"],
     }),
+
     updateTask: builder.mutation<Task, { status: string; taskId: string }>({
       query: ({ status, taskId }) => ({
-        url: `/task/${taskId}`,
+        url: `/task/${taskId}/updateStatus`,
         method: "PATCH",
         body: { status },
       }),
-      invalidatesTags: (result,error,{taskId}) => [{ type: "Task", id: taskId }],
+      invalidatesTags: (result, error, { taskId }) => [
+        { type: "Task", id: taskId },
+      ],
     }),
+
     deleteTask: builder.mutation<Task, string>({
       query: (taskId) => ({
         url: `/task/${taskId}`,

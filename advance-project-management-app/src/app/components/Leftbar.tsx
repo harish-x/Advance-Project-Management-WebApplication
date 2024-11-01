@@ -1,3 +1,4 @@
+"use client";
 import {
   CollapsibleContent,
   CollapsibleTrigger,
@@ -35,11 +36,25 @@ import {
   Activity,
   UserRound,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
+import { useGetProjectsQuery } from "@/lib/features/project";
+import { Project as ptojectsInterface } from "@/lib/features/project";
+import Spinner from "./Spinner";
+import { usePathname } from "next/navigation";
 
 type Props = {};
 
 const Leftbar = (props: Props) => {
+  const {
+    isError,
+    isLoading,
+    isSuccess,
+    data: projects,
+  } = useGetProjectsQuery();
+  const pathname = usePathname();
+  
+
+
   return (
     <div>
       <Sidebar className=" py-2">
@@ -69,15 +84,17 @@ const Leftbar = (props: Props) => {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton>project1</SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton>project2</SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton>project3</SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
+                      {isLoading ? (
+                        <Spinner />
+                      ) : (
+                        projects?.map((item: ptojectsInterface) => (
+                          <SidebarMenuSubItem key={item.id}>
+                            <SidebarMenuSubButton href={`/dashboard/projects/${item.id}`} isActive={pathname === `/dashboard/projects/${item.id}`}>
+                              {item.name}
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))
+                      )}
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </SidebarMenuItem>

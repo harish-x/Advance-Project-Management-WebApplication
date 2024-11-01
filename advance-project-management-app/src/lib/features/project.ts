@@ -12,21 +12,20 @@ export interface Project {
   status: string;
 }
 export const ProjectAPi = reAuthQuery.injectEndpoints({
-    
-    endpoints: (builder) => ({
+  endpoints: (builder) => ({
     getProjects: builder.query<Project[], void>({
-        query: () => "projects",
-        providesTags: ["Projects"],
+      query: () => "project/getprojects",
+      providesTags: ["Projects"],
     }),
     createProject: builder.mutation<Project, Partial<Project>>({
-        query: (project) => ({
-            url: "projects",
-            method: "POST",
-            body: project,
-        }),
-        invalidatesTags: ["Projects"],
+      query: (project) => ({
+        url: "project/createproject",
+        method: "POST",
+        body: project,
+      }),
+      invalidatesTags: ["Projects"],
     }),
   }),
-})
+});
 
 export const { useGetProjectsQuery, useCreateProjectMutation } = ProjectAPi

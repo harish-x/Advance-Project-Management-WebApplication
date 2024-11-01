@@ -19,6 +19,10 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         backgroundfw: "rgb(var(--backgroundfw))",
+        todo: "var(--todo)",
+        wip: "var(--wip)",
+        review: "var(--review)",
+        done: "var(--complete)",
 
         card: {
           DEFAULT: "hsl(var(--card))",

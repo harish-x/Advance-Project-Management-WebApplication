@@ -1,11 +1,36 @@
-import React from 'react'
+"use client";
+import React from "react";
+import ProjectHeader from "../ProjectHeader";
+import Board from "../boardView";
+import ListView from "../ListView";
 
-type Props = {}
+type Props = {
+  params: {
+    id: string;
+  };
+};
 
-const page = (props: Props) => {
+const page = ({ params }: Props) => {
+  const { id } = params;
+  console.log(id);
+  
+  const [isActiveTab, setIsActiveTab] = React.useState("board");
+  const [isModelNewTaskOpen, setIsModelNewTaskOpen] = React.useState(false);
+
   return (
-    <div>hello</div>
-  )
-}
+    <>
+      <ProjectHeader
+        isActiveTab={isActiveTab}
+        setIsActiveTab={setIsActiveTab}
+      />
+      {isActiveTab === "board" && (
+        <Board id={id} setIsModalNewTaskOpen={setIsModelNewTaskOpen} />
+      )}
+      {isActiveTab === "List" && (
+        <ListView id={id} setIsModalNewTaskOpen={setIsModelNewTaskOpen} />
+      )}
+    </>
+  );
+};
 
-export default page
+export default page;

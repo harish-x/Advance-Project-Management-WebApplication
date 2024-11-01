@@ -23,8 +23,38 @@ class getAllTasks {
         projectId,
       },
       include: {
-        assignee: true,
-        author: true,
+        assignee: {
+          select: {
+            userName: true,
+            userId: true,
+            email: true,
+            profilePicture: true,
+            assignedTasks: true,
+            comments: true,
+            teamId: true,
+            attachments: true,
+            role: true,
+            authoredTasks: true,
+            taskAssignment: true,
+            team: true,
+          },
+        },
+        author: {
+          select: {
+            userName: true,
+            userId: true,
+            email: true,
+            profilePicture: true,
+            assignedTasks: true,
+            comments: true,
+            teamId: true,
+            attachments: true,
+            role: true,
+            authoredTasks: true,
+            taskAssignment: true,
+            team: true,
+          },
+        },
         comments: true,
         attachments: true,
       },
@@ -32,20 +62,7 @@ class getAllTasks {
     return tasks;
   }
 
-  async createTask({
-    title,
-    description,
-    status,
-    priority,
-    tags,
-    stateDate,
-    dueDate,
-    projectId,
-    points,
-    authorUserId,
-    assignedUserID,
-    name,
-  }: taskParamsT) {
+  async createTask({ title, description, status, priority, tags, stateDate, dueDate, projectId, points, authorUserId, assignedUserID, name, }: taskParamsT) {
     const task = await prisma.task.create({
       data: {
         title,
