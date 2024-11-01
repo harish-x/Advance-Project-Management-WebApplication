@@ -74,7 +74,7 @@ model Task {
   tags            String?
   status          String           @default("pending")
   priority        String
-  points          String?
+  points          Int?
   authorUserId    String
   assignedUserID  String
   projectId       String

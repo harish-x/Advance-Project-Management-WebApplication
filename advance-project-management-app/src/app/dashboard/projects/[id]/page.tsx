@@ -3,6 +3,8 @@ import React from "react";
 import ProjectHeader from "../ProjectHeader";
 import Board from "../boardView";
 import ListView from "../ListView";
+import Timeline from "../TimelineView";
+import TableView from "../TableView";
 
 type Props = {
   params: {
@@ -28,6 +30,12 @@ const page = ({ params }: Props) => {
       )}
       {isActiveTab === "List" && (
         <ListView id={id} setIsModalNewTaskOpen={setIsModelNewTaskOpen} />
+      )}
+      {isActiveTab === "Timeline" && (
+        <Timeline id={id} setIsModalNewTaskOpen={setIsModelNewTaskOpen} />
+      )}
+      {isActiveTab === "Table" && (
+        <TableView id={id} setIsModalNewTaskOpen={setIsModelNewTaskOpen} />
       )}
     </>
   );

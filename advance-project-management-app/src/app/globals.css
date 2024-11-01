@@ -34,8 +34,8 @@ body {
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
+    --popover: 240 8.32% 8.04%;
+    --popover-foreground: 210 40% 96.1%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --secondary: 210 40% 96.1%;
@@ -55,4 +55,52 @@ body {
 
 
   }
+}
+
+
+.timeline ._3_ygE {
+  @apply rounded-tl-md border border-r-0 border-[#e6e4e4] ;
+}
+.timeline ._2eZzQ {
+  @apply border-[#e6e4e4] ;
+}
+.timeline ._2dZTy {
+  @apply fill-backgroundfw;
+}
+.timeline ._2dZTy:nth-child(even) {
+  @apply fill-secondary ;
+}
+.timeline ._2q1Kt{
+  @apply fill-white
+}
+.timeline ._35nLX {
+  @apply fill-backgroundfw stroke-[#e6e4e4] ;
+}
+.timeline ._9w8d5 {
+  @apply fill-white ;
+}
+.timeline ._34SS0 {
+  @apply bg-backgroundfw ;
+}
+.timeline ._34SS0:nth-of-type(even) {
+  @apply bg-[#f5f5f5] ;
+}
+.timeline ._RuwuK,
+.timeline ._3rUKi,
+.timeline ._1rLuZ {
+  @apply stroke-[#e6e4e4] ;
+}
+.timeline ._3ZbQT {
+  @apply border-l-0 border-[#e6e4e4] ;
+}
+.timeline ._3T42e {
+  @apply bg-backgroundfw ;
+}
+.timeline ._29NTg {
+  @apply text-white;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
 }

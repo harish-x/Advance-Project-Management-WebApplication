@@ -12,7 +12,7 @@ export interface Task {
   desc: string;
   status: Status;
   priority: Priority;
-  points?: string;
+  points?: number;
   authorUserId: string;
   assignedUserID: string;
   projectId: string;
