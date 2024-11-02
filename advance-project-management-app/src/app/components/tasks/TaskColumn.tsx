@@ -14,7 +14,6 @@ const TaskColumn = ({
   tasks,
   setIsModalNewTaskOpen,
 }: TaskColumnProps) => {
-  console.log(tasks);
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "task",
     drop: (item: { id: string }) => {

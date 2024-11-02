@@ -1,8 +1,10 @@
 "use client";
 import Header from "@/app/components/Header";
 import { Input } from "@/components/ui/input";
-import { ClockIcon, FilterIcon, Grid3X3, List, Share2Icon, Table } from "lucide-react";
+import { ClockIcon, FilterIcon, Grid3X3, List, PlusSquareIcon, Share2Icon, Table } from "lucide-react";
 import React from "react";
+import ModalNewProject from "@/app/components/modal/ProjectModal";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   isActiveTab: string;
@@ -13,8 +15,21 @@ const ProjectHeader = (props: Props) => {
   const [isModelNewTaskOpen, setIsModelNewTaskOpen] = React.useState(false);
   return (
     <div className="px-4 xl:px-6">
+      <ModalNewProject
+        isOpen={isModelNewTaskOpen}
+        onClose={() => setIsModelNewTaskOpen(false)}
+      />
       <div className="pb-6 pt-6 lg:pb-4 lg:pt-8 ">
-        <Header name="product design" />
+        <Header
+          name="product design"
+          buttonComponent={
+            <Button variant="secondary"
+              onClick={() => setIsModelNewTaskOpen(true)}
+            >
+              <PlusSquareIcon className="mr-2 h-5 w-5" /> new project
+            </Button>
+          }
+        />
       </div>
       <div className="flex flex-wrap-reverse gap-2 border-y border-secondary/10 py-2 md:items-center">
         <div className="flex flex-1 items-center gap-2 md:gap-4">
