@@ -5,6 +5,7 @@ import Board from "../boardView";
 import ListView from "../ListView";
 import Timeline from "../TimelineView";
 import TableView from "../TableView";
+import NewTaskModal from "@/app/components/modal/NewTaskModal";
 
 type Props = {
   params: {
@@ -21,6 +22,11 @@ const page = ({ params }: Props) => {
 
   return (
     <>
+      <NewTaskModal
+        isOpen={isModelNewTaskOpen}
+        onClose={() => setIsModelNewTaskOpen(false)}
+        projectID={id}
+      />
       <ProjectHeader
         isActiveTab={isActiveTab}
         setIsActiveTab={setIsActiveTab}

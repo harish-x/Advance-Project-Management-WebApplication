@@ -78,7 +78,6 @@ export const sendOtp = catchAsyncError(
   }
 );
 
-
 export const verifyOtp = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const { otp, email } = req.body;
@@ -89,15 +88,15 @@ export const verifyOtp = catchAsyncError(
     if (!user) {
       return next(new ErrorHandler("user not found", 404));
     }
-   const checkotp = await prisma.user.findFirst({
+    const checkotp = await prisma.user.findFirst({
       where: {
         userId: user.userId,
         otp,
         otpExpired: {
-          gte: new Date(Date.now())
-        }
+          gte: new Date(Date.now()),
+        },
       },
-   })
+    });
 
     if (!checkotp) {
       return next(new ErrorHandler("invalid otp or expired", 400));
@@ -109,6 +108,7 @@ export const verifyOtp = catchAsyncError(
 export const getAccessToken = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.jwt;
+
     if (!refreshToken)
       return next(new ErrorHandler("refresh token missing", 401));
     jwt.verify(
@@ -136,10 +136,21 @@ export const getAccessToken = catchAsyncError(
   }
 );
 
-export const test = catchAsyncError(
+export const getUser = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     let user = req.user;
-    res.status(200).json({ message: "working", user });
+    if (!user) {
+      return next(new ErrorHandler("user not found", 404));
+    }
+    const {
+      otpExpired,
+      otp,
+      resetPasswordToken,
+      resetPasswordTokenExpired,
+      password,
+      ...rest
+    } = user;
+    sendUserToken(rest, 200, res);
   }
 );
 
@@ -155,9 +166,11 @@ export const forgotPassword = catchAsyncError(
       return next(new ErrorHandler("user not found", 404));
     }
 
-    const resetToken = await UserServices.generateResetPasswordToken(user.userId);
+    const resetToken = await UserServices.generateResetPasswordToken(
+      user.userId
+    );
     console.log(resetToken);
-    
+
     try {
       const resetUrl = `${process.env.FRONTENDURL}${resetToken}`;
       const message = `<h1>Reset Password</h1>

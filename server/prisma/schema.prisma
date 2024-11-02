@@ -69,7 +69,7 @@ model Task {
   name            String
   title           String?
   description     String?
-  stateDate       DateTime
+  startDate       DateTime
   dueDate         DateTime?
   tags            String?
   status          String           @default("pending")

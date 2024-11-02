@@ -6,7 +6,7 @@ export interface Task {
   name: string;
   title?: string;
   description?: string;
-  stateDate: Date;
+  startDate: Date;
   dueDate?: Date;
   tags: string;
   desc: string;

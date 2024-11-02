@@ -36,11 +36,12 @@ import {
   Activity,
   UserRound,
 } from "lucide-react";
-import React, { useEffect } from "react";
+import React from "react";
 import { useGetProjectsQuery } from "@/lib/features/project";
 import { Project as ptojectsInterface } from "@/lib/features/project";
 import Spinner from "./Spinner";
 import { usePathname } from "next/navigation";
+
 
 type Props = {};
 
@@ -52,7 +53,6 @@ const Leftbar = (props: Props) => {
     data: projects,
   } = useGetProjectsQuery();
   const pathname = usePathname();
-  
 
 
   return (
@@ -89,7 +89,12 @@ const Leftbar = (props: Props) => {
                       ) : (
                         projects?.map((item: ptojectsInterface) => (
                           <SidebarMenuSubItem key={item.id}>
-                            <SidebarMenuSubButton href={`/dashboard/projects/${item.id}`} isActive={pathname === `/dashboard/projects/${item.id}`}>
+                            <SidebarMenuSubButton
+                              href={`/dashboard/projects/${item.id}`}
+                              isActive={
+                                pathname === `/dashboard/projects/${item.id}`
+                              }
+                            >
                               {item.name}
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>

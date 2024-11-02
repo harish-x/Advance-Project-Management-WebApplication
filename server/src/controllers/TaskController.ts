@@ -22,7 +22,7 @@ export const createTask = catchAsyncError(
       status,
       priority,
       tags,
-      stateDate,
+      startDate,
       dueDate,
       projectId,
       points,
@@ -33,20 +33,7 @@ export const createTask = catchAsyncError(
     if (!title || !description) {
       return next(new ErrorHandler("title and description are required", 400));
     }
-    const task = await TaskServices.createTask({
-      title,
-      name,
-      description,
-      status,
-      priority,
-      tags,
-      stateDate,
-      dueDate,
-      projectId,
-      points,
-      authorUserId,
-      assignedUserID,
-    });
+    const task = await TaskServices.createTask({ title, name, description, status, priority, tags, startDate, dueDate, projectId, points, authorUserId, assignedUserID, });
     res.status(200).json( task );
   }
 );

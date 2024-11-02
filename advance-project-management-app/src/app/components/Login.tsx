@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect } from "react";
 import {
+  useCheckUserQuery,
   useLoginUserMutation,
   useLoginWithOtpMutation,
   useVerifyOtpMutation,
 } from "@/lib/features/auth";
-import { useAppDispatch } from "../store/redux";
+import { useAppDispatch } from "@/app/store/redux";
 import { setCredentials } from "@/lib/state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,7 +36,24 @@ const Login = () => {
   const [loginWithOtp, { isLoading: isLoginWithOtpLoading }] =
     useLoginWithOtpMutation();
   const [verifyOtp, { isLoading: isVerifyOtpLoading }] = useVerifyOtpMutation();
+  const {
+    isError,
+    data: UserData,
+    isLoading,
+    isSuccess: isUserSuccess,
+  } = useCheckUserQuery();
+  useEffect(() => {
+    if (isUserSuccess) {
+      dispatch(setCredentials(UserData));
 
+      toast({
+        title: "Signed in successfully",
+        description: "Welcome back !",
+      });
+      router.push("/dashboard");
+
+    }
+  },[isUserSuccess,isLoading,UserData]);
   async function handleSubmit() {
     try {
       await loginUser({ email, password })

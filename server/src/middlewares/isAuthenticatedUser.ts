@@ -14,8 +14,10 @@ const isAuthenticatedUser = catchAsyncError(
       if (tokenHeader && tokenHeader.startsWith("Bearer ")) {
         const token = tokenHeader.split(" ")[1];
 
-        if (!token) {
-          return next(new ErrorHandler("missing token", 401));
+        console.log(token);
+
+        if (!token || token === "undefined" || token === "null") {
+          return next(new ErrorHandler("missing token", 403));
         }
         jwt.verify(
           token,
@@ -32,7 +34,7 @@ const isAuthenticatedUser = catchAsyncError(
               if (!user) {
                 return next(new ErrorHandler("User not found", 404));
               }
-               req.user = user;
+              req.user = user;
               next();
             } catch (error) {
               return next(new ErrorHandler("Authentication failed", 500));

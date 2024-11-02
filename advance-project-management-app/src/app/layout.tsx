@@ -4,6 +4,7 @@ import "./globals.css";
 import ReduxWrapper from "./reduxWrapper";
 import { Toaster } from "@/components/ui/toaster";
 
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -14,7 +15,6 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
-
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -29,8 +29,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ReduxWrapper>{children}</ReduxWrapper>
-        <Toaster/>
+  
+          <ReduxWrapper>{children}</ReduxWrapper>
+     
+        <Toaster />
       </body>
     </html>
   );

@@ -18,8 +18,8 @@ const Task = ({ task }: TaskProps) => {
     }),
   }));
   const taskSplits = task.tags ? task.tags.split(",") : [];
-  const formattedStartDate = task.stateDate
-    ? format(new Date(task.stateDate), "P")
+  const formattedStartDate = task.startDate
+    ? format(new Date(task.startDate), "P")
     : "";
   const formattedDueDate = task.dueDate
     ? format(new Date(task.dueDate), "P")

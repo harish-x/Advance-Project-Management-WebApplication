@@ -67,8 +67,8 @@ const TaskCard = ({ task, setIsModalNewTaskOpen }: Props) => {
           <CalendarDaysIcon size={16} />
           Start Date:{" "}
         </strong>{" "}
-        {task.stateDate
-          ? format(new Date(task.stateDate), "P")
+        {task.startDate
+          ? format(new Date(task.startDate), "P")
           : "No start date provided"}
       </p>
       <p className="flex items-center gap-2">

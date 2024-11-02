@@ -6,7 +6,7 @@ const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:8080/api",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
-    const accessToken = (getState() as RootState).global.accessToken;
+    const accessToken = sessionStorage.getItem("access");
     if (accessToken) {
       headers.set("Authorization", `Bearer ${accessToken}`);
     }
@@ -22,6 +22,7 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 
     if (refreshResult?.data) {
       const user = (api.getState() as RootState).global.user;
+      sessionStorage.setItem("access", (refreshResult.data as any).accessToken);
       api.dispatch(setCredentials({ ...refreshResult.data, user }));
       result = await baseQuery(args, api, extraOptions);
     } else {

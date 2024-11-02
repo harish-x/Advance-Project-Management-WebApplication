@@ -2,14 +2,14 @@ import { use } from "react";
 import { reAuthQuery } from "./authQuery";
 import { url } from "inspector";
 
-
-export interface User{
-   userId         : string; 
-  userName       : string;
-  email          : string; 
-  profilePicture? : string;
+export interface User {
+  userId: string;
+  userName: string;
+  email: string;
+  profilePicture?: string;
   teamId?: number;
   role: string;
+  accessToken: string;
 }
 
 export const authApiSlice = reAuthQuery.injectEndpoints({
@@ -28,8 +28,8 @@ export const authApiSlice = reAuthQuery.injectEndpoints({
         body: credentials,
       }),
     }),
-    test: builder.query({
-      query: () => "/auth/test",
+    checkUser: builder.query<User, void>({
+      query: () => "/auth/getuser",
     }),
     loginWithOtp: builder.mutation({
       query: (data) => ({
@@ -56,7 +56,7 @@ export const authApiSlice = reAuthQuery.injectEndpoints({
       query: (data: { password: string; resetToken: string }) => ({
         url: `/auth/resetpassword/${data.resetToken}`,
         method: "POST",
-        body: {password:data.password}
+        body: { password: data.password },
       }),
     }),
   }),
@@ -65,7 +65,7 @@ export const authApiSlice = reAuthQuery.injectEndpoints({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
-  useTestQuery,
+  useCheckUserQuery,
   useLoginWithOtpMutation,
   useVerifyOtpMutation,
   useForgotPasswordMutation,

@@ -8,7 +8,7 @@ type taskParamsT = {
   status: string;
   priority: string;
   tags: string;
-  stateDate: Date;
+  startDate: Date;
   dueDate: Date;
   projectId: string;
   points: string;
@@ -62,7 +62,7 @@ class getAllTasks {
     return tasks;
   }
 
-  async createTask({ title, description, status, priority, tags, stateDate, dueDate, projectId, points, authorUserId, assignedUserID, name, }: taskParamsT) {
+  async createTask({ title, description, status, priority, tags, startDate, dueDate, projectId, points, authorUserId, assignedUserID, name, }: taskParamsT) {
     const task = await prisma.task.create({
       data: {
         title,
@@ -71,10 +71,10 @@ class getAllTasks {
         status,
         priority,
         tags,
-        stateDate,
+        startDate,
         dueDate,
         projectId,
-        points,
+        points:parseInt(points),
         authorUserId,
         assignedUserID,
       },

@@ -32,7 +32,7 @@ const Timeline = ({ id, setIsModalNewTaskOpen }: Props) => {
   const ganttTask = React.useMemo(() => {
     return (
       tasks?.map((task) => ({
-        start: new Date(task.stateDate),
+        start: new Date(task.startDate),
         end: new Date(task.dueDate!),
         name: task.title ?? "",
         id: `Task-${task.id}`,
@@ -63,10 +63,10 @@ const Timeline = ({ id, setIsModalNewTaskOpen }: Props) => {
           <div className="relative inline-block w-64">
             <Select
               value={displayOptions.viewMode}
-              onValueChange={(e) => handleViewMode(e)}
+              onValueChange={(e: string) => handleViewMode(e)}
             >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Theme" />
+                <SelectValue placeholder="Theme"  />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={ViewMode.Day}>Day</SelectItem>

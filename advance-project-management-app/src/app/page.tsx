@@ -1,5 +1,3 @@
-
-import { ArrowRight,ArrowDownCircleIcon } from "lucide-react";
 import Login from "./components/Login";
 import GetStartbtn from "./components/getStartbtn";
 
