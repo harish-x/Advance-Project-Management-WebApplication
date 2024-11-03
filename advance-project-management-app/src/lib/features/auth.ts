@@ -1,6 +1,7 @@
 import { use } from "react";
 import { reAuthQuery } from "./authQuery";
 import { url } from "inspector";
+import { searchResults } from "./task";
 
 export interface User {
   userId: string;
@@ -59,6 +60,9 @@ export const authApiSlice = reAuthQuery.injectEndpoints({
         body: { password: data.password },
       }),
     }),
+    searchUsers: builder.query<searchResults, string>({
+      query: (query) => `/search/users?query=${query}`,
+    }),
   }),
 });
 
@@ -70,4 +74,5 @@ export const {
   useVerifyOtpMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useSearchUsersQuery,
 } = authApiSlice;

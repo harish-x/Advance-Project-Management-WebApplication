@@ -11,10 +11,7 @@ const isAuthenticatedUser = catchAsyncError(
       const tokenHeader = Array.isArray(authHeader)
         ? authHeader[0]
         : authHeader;
-      if (tokenHeader && tokenHeader.startsWith("Bearer ")) {
-        const token = tokenHeader.split(" ")[1];
-
-        console.log(token);
+        const token = tokenHeader?.split(" ")[1];
 
         if (!token || token === "undefined" || token === "null") {
           return next(new ErrorHandler("missing token", 403));
@@ -41,9 +38,7 @@ const isAuthenticatedUser = catchAsyncError(
             }
           }
         );
-      } else {
-        return next(new ErrorHandler("Authentication failed", 401));
-      }
+      
     } catch (error) {
       return next(new ErrorHandler("Authentication failed", 500));
     }

@@ -1,5 +1,6 @@
 import { User } from "./auth";
 import { reAuthQuery } from "./authQuery";
+import { Project } from "./project";
 
 export interface Task {
   id: string;
@@ -21,6 +22,12 @@ export interface Task {
   assignee?: User;
   comments?: Comment[];
   attachments?: Attachment[];
+}
+
+export interface searchResults{
+  task?: Task[];
+  projects?: Project[];
+  users?: User[];
 }
 
 export interface Attachment {
@@ -65,7 +72,7 @@ export const TaskApi = reAuthQuery.injectEndpoints({
 
     createTask: builder.mutation<Task, Partial<Task>>({
       query: (task) => ({
-        url: `/task`,
+        url: `task/createTask`,
         method: "POST",
         body: task,
       }),
@@ -90,12 +97,13 @@ export const TaskApi = reAuthQuery.injectEndpoints({
       }),
       invalidatesTags: ["Task"],
     }),
+
+    searchTasks: builder.query<searchResults, string>({
+      query: (query) => `/search/tasks?query=${query}`,
+    }),
+    
+    
   }),
 });
 
-export const {
-  useGetAllTasksQuery,
-  useCreateTaskMutation,
-  useUpdateTaskMutation,
-  useDeleteTaskMutation,
-} = TaskApi;
+export const { useGetAllTasksQuery, useCreateTaskMutation, useUpdateTaskMutation, useDeleteTaskMutation, useSearchTasksQuery, } = TaskApi;

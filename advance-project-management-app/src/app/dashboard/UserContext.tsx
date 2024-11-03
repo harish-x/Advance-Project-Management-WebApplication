@@ -1,11 +1,13 @@
 "use client";
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useCheckUserQuery } from "@/lib/features/auth";
+import { useRouter } from "next/navigation"; // Import useRouter for redirection
+import Spinner from "../components/Spinner";
 
 interface UserContextType {
   isLoading: boolean;
   isError: boolean;
-  userData: any | null; // Adjust type according to your user data structure
+  userData: any | null;
   isUserSuccess: boolean;
 }
 
@@ -15,11 +17,26 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const {
-    data: userData, // Directly use the fetched data
+    data: UserData,
     isError,
     isLoading,
     isSuccess: isUserSuccess,
+    refetch,
   } = useCheckUserQuery();
+  const [userData, setUserData] = useState(UserData);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isUserSuccess && UserData) {
+      setUserData(UserData);
+    } else if (!isUserSuccess && !isLoading) {
+      router.push("/");
+    }
+  }, [isUserSuccess, UserData, isLoading, router]);
+
+  if (isLoading) {
+    return <div className="w-full h-screen flex justify-center items-center"><Spinner/></div>;
+  }
 
   return (
     <UserContext.Provider
@@ -30,7 +47,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-// Custom hook to use the UserContext
 export const useUserContext = () => {
   const context = useContext(UserContext);
   if (context === undefined) {

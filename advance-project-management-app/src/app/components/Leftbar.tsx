@@ -35,12 +35,14 @@ import {
   Settings,
   Activity,
   UserRound,
+  Search,
 } from "lucide-react";
 import React from "react";
 import { useGetProjectsQuery } from "@/lib/features/project";
 import { Project as ptojectsInterface } from "@/lib/features/project";
 import Spinner from "./Spinner";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 
 type Props = {};
@@ -53,7 +55,7 @@ const Leftbar = (props: Props) => {
     data: projects,
   } = useGetProjectsQuery();
   const pathname = usePathname();
-
+const router = useRouter()
 
   return (
     <div>
@@ -109,7 +111,10 @@ const Leftbar = (props: Props) => {
           {/* *****************************group 3******************************* */}
           <SidebarGroup className="mt-2">
             <SidebarMenuButton className="mt-3">
-              <div className=" flex px-2 items-center space-x-5">
+              <div
+                className=" flex px-2 items-center space-x-5"
+                onClick={() => router.push("/dashboard/timeline")}
+              >
                 <Activity />
                 <p className="font-semibold">Timeline</p>
               </div>
@@ -118,6 +123,12 @@ const Leftbar = (props: Props) => {
               <div className=" flex px-2 items-center space-x-5">
                 <UserRound />
                 <p className="font-semibold">Employees</p>
+              </div>
+            </SidebarMenuButton>
+            <SidebarMenuButton className="mt-3">
+              <div className=" flex items-center px-2 space-x-5">
+                <Search />
+                <p className="font-semibold">Search</p>
               </div>
             </SidebarMenuButton>
             <SidebarMenuButton className="mt-3">

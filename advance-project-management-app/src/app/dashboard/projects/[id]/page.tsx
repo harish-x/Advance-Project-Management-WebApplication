@@ -15,7 +15,6 @@ type Props = {
 
 const page = ({ params }: Props) => {
   const { id } = params;
-  console.log(id);
   
   const [isActiveTab, setIsActiveTab] = React.useState("board");
   const [isModelNewTaskOpen, setIsModelNewTaskOpen] = React.useState(false);

@@ -1,4 +1,5 @@
 import { reAuthQuery } from "./authQuery";
+import { searchResults } from "./task";
 
 export interface Project {
   id: string;
@@ -25,7 +26,10 @@ export const ProjectAPi = reAuthQuery.injectEndpoints({
       }),
       invalidatesTags: ["Projects"],
     }),
+    searchProjects: builder.query<searchResults, string>({
+      query: (query) => `/search/projects?query=${query}`,
+    }),
   }),
 });
 
-export const { useGetProjectsQuery, useCreateProjectMutation } = ProjectAPi
+export const { useGetProjectsQuery, useCreateProjectMutation, useSearchProjectsQuery} = ProjectAPi
