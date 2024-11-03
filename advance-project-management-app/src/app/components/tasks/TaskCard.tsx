@@ -18,6 +18,7 @@ const TaskCard = ({ task, setIsModalNewTaskOpen }: Props) => {
   const taskSplits = task.tags ? task.tags.split(",") : [];
   return (
     <div
+    
       className={`mb-3 rounded-lg p-4 shadow-sm space-y-1 ${
         task.priority === "Urgent"
           ? "bg-red-200 text-red-700"

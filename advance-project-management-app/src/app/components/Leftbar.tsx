@@ -120,13 +120,19 @@ const router = useRouter()
               </div>
             </SidebarMenuButton>
             <SidebarMenuButton className="mt-3">
-              <div className=" flex px-2 items-center space-x-5">
+              <div
+                className=" flex px-2 items-center space-x-5"
+                onClick={() => router.push("/dashboard/employes")}
+              >
                 <UserRound />
-                <p className="font-semibold">Employees</p>
+                <p className="font-semibold">Employes</p>
               </div>
             </SidebarMenuButton>
             <SidebarMenuButton className="mt-3">
-              <div className=" flex items-center px-2 space-x-5">
+              <div
+                className=" flex items-center px-2 space-x-5"
+                onClick={() => router.push("/dashboard/search")}
+              >
                 <Search />
                 <p className="font-semibold">Search</p>
               </div>

@@ -12,7 +12,13 @@ type UserParamsT = {
   teamId: number;
 };
 class UserServices {
-  async CreateUser({ userName, email, password, profilePicture, teamId, }: UserParamsT) {
+  async CreateUser({
+    userName,
+    email,
+    password,
+    profilePicture,
+    teamId,
+  }: UserParamsT) {
     try {
       const hashPassword = await bcrypt.hash(password, 10);
       const user = await prisma.user.create({
@@ -25,7 +31,14 @@ class UserServices {
         },
       });
       if (user) {
-        const { password,resetPasswordToken,resetPasswordTokenExpired,otp,otpExpired, ...rest } = user;
+        const {
+          password,
+          resetPasswordToken,
+          resetPasswordTokenExpired,
+          otp,
+          otpExpired,
+          ...rest
+        } = user;
 
         return rest;
       }
@@ -87,7 +100,14 @@ class UserServices {
     if (!isMatch) {
       return false;
     }
-    const { password: pswd,resetPasswordToken,resetPasswordTokenExpired,otp,otpExpired, ...rest } = user;
+    const {
+      password: pswd,
+      resetPasswordToken,
+      resetPasswordTokenExpired,
+      otp,
+      otpExpired,
+      ...rest
+    } = user;
     return rest;
   }
 
@@ -130,6 +150,24 @@ class UserServices {
       },
     });
     return user;
+  }
+  async getAllUsers() {
+    const users = await prisma.user.findMany({
+      select: {
+        userId: true,
+        userName: true,
+        email: true,
+        profilePicture: true,
+        role: true,
+        team: {
+          select: {
+            teamName: true,
+          },
+        },
+      },
+    });
+
+    return users;
   }
 }
 

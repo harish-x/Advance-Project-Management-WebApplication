@@ -156,7 +156,7 @@ const NewTaskModal = ({ isOpen, onClose, projectID }: Props) => {
                 setData({ ...data, priority: e as Priority })
               }
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full text-secondary">
                 <SelectValue placeholder="Priority" />
               </SelectTrigger>
               <SelectContent>
@@ -170,7 +170,7 @@ const NewTaskModal = ({ isOpen, onClose, projectID }: Props) => {
               value={data.status}
               onValueChange={(e) => setData({ ...data, status: e as Status })}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full text-secondary">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>

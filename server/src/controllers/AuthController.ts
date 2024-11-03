@@ -201,3 +201,10 @@ export const resetPassword = catchAsyncError(
     res.status(200).json({ message: "password reset successfully" });
   }
 );
+
+export const getAllusers = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const users = await UserServices.getAllUsers();
+    res.status(200).json(users);
+  }
+);

@@ -37,7 +37,7 @@ const TaskColumn = ({
         drop(instance);
       }}
       className={`sl:py-4 rounded-lg py-2 xl:px-2 bg-backgroundfw ${
-        isOver ? "bg-gray-100" : ""
+        isOver ? "bg-gray-400" : ""
       }`}
     >
       <div className="mb-3 flex w-full">
@@ -61,11 +61,12 @@ const TaskColumn = ({
           </h3>
 
           <div className="flex items-center gap-1">
-            <button className="flex h-6 w-5 items-center justify-center">
+            {/* <button className="flex h-6 w-5 items-center justify-center">
               <EllipsisVertical size={26} />
-            </button>
+            </button> */}
             <button
-              className="flex h-6 w-6 items-center justify-center rounded bg-background"
+              className="flex h-6 w-6 items-center justify-center rounded"
+              style={{ backgroundColor: statusColor[status] }}
               onClick={() => setIsModalNewTaskOpen(true)}
             >
               <Plus size={16} />
