@@ -41,7 +41,7 @@ model Project {
   id           String        @id @default(cuid())
   name         String
   clientName   String?
-  startDate    DateTime
+  startDate    DateTime      @default(now())
   DueDate      DateTime?
   finishedDate DateTime?
   price        Decimal?
@@ -67,7 +67,7 @@ model Task {
   startDate       DateTime
   dueDate         DateTime?
   tags            String?
-  status          String           @default("pending")
+  status          String   
   priority        String
   points          Int?
   authorUserId    String
@@ -81,6 +81,9 @@ model Task {
   attachments     Attachment[]
   comments        Comment[]
 }
+
+
+
 
 model TaskAssignment {
   id     String @id @default(cuid())

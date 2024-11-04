@@ -101,9 +101,11 @@ export const TaskApi = reAuthQuery.injectEndpoints({
     searchTasks: builder.query<searchResults, string>({
       query: (query) => `/search/tasks?query=${query}`,
     }),
-    
+    getSingleTask: builder.query<Task, string>({
+      query: (taskId) => `/task/getsingleTask?taskId=${taskId}`,
+    }),
     
   }),
 });
 
-export const { useGetAllTasksQuery, useCreateTaskMutation, useUpdateTaskMutation, useDeleteTaskMutation, useSearchTasksQuery, } = TaskApi;
+export const { useGetAllTasksQuery, useCreateTaskMutation, useUpdateTaskMutation, useDeleteTaskMutation, useSearchTasksQuery,useGetSingleTaskQuery } = TaskApi;

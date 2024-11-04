@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import { Project } from "@prisma/client";
 
+
 type taskParamsT = {
   title: string;
   description: string;
@@ -90,6 +91,52 @@ class getAllTasks {
       },
     });
     return task;
+  }
+
+
+  async getTaskById(taskId: string) {
+    const tasks = await prisma.task.findFirst({
+      where: {
+        id: taskId,
+      },
+      include: {
+        assignee: {
+          select: {
+            userName: true,
+            userId: true,
+            email: true,
+            profilePicture: true,
+            assignedTasks: true,
+            comments: true,
+            teamId: true,
+            attachments: true,
+            role: true,
+            authoredTasks: true,
+            taskAssignment: true,
+            team: true,
+          },
+        },
+        author: {
+          select: {
+            userName: true,
+            userId: true,
+            email: true,
+            profilePicture: true,
+            assignedTasks: true,
+            comments: true,
+            teamId: true,
+            attachments: true,
+            role: true,
+            authoredTasks: true,
+            taskAssignment: true,
+            team: true,
+          },
+        },
+        comments: true,
+        attachments: true,
+      },
+    });
+    return tasks;
   }
 }
 

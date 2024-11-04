@@ -10,7 +10,7 @@ export const getTasks = catchAsyncError(
     if (!tasks) {
       return next(new ErrorHandler("task not found", 404));
     }
-    res.status(201).json( tasks );
+    res.status(201).json(tasks);
   }
 );
 
@@ -33,11 +33,23 @@ export const createTask = catchAsyncError(
     if (!title || !description) {
       return next(new ErrorHandler("title and description are required", 400));
     }
-    const task = await TaskServices.createTask({ title, name, description, status, priority, tags, startDate, dueDate, projectId, points, authorUserId, assignedUserID, });
-    res.status(200).json( task );
+    const task = await TaskServices.createTask({
+      title,
+      name,
+      description,
+      status,
+      priority,
+      tags,
+      startDate,
+      dueDate,
+      projectId,
+      points,
+      authorUserId,
+      assignedUserID,
+    });
+    res.status(200).json(task);
   }
 );
-
 
 export const updateTask = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -53,4 +65,19 @@ export const updateTask = catchAsyncError(
     }
     res.status(200).json({ task });
   }
-)
+);
+
+export const getSingleTask = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const taskId = req.query.taskId as string;
+    console.log(taskId);
+    if (!taskId) {
+      return next(new ErrorHandler("taskId is required", 400));
+    }
+    const task = await TaskServices.getTaskById(taskId);
+    if (!task) {
+      return next(new ErrorHandler("task not found", 404));
+    }
+    res.status(200).json(task);
+  }
+);

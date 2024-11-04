@@ -10,7 +10,6 @@ import TaskColumn from "@/app/components/tasks/TaskColumn";
 import Header from "@/app/components/Header";
 import { Button } from "@/components/ui/button";
 import { ClipboardPlus } from "lucide-react";
-
 type Props = {
   id: string;
   setIsModalNewTaskOpen: React.Dispatch<React.SetStateAction<boolean>>;

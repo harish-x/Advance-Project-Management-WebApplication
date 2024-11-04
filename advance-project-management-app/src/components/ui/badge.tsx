@@ -14,7 +14,7 @@ const badgeVariants = cva(
         todo: "border-transparent bg-todo text-destructive-foreground shadow hover:bg-todo/80",
         review:
           "border-transparent bg-review text-secondary-foreground shadow hover:bg-review/80",
-        done: "border-transparent bg-done text-secondary-foreground shadow hover:bg-done/80",
+        done: "border-transparent bg-done text-secondary shadow hover:bg-done/80",
         outline: "text-foreground",
       },
     },
