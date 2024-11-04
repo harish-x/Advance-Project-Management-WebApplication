@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import { Project } from "@prisma/client";
 
-
 type taskParamsT = {
   title: string;
   description: string;
@@ -63,7 +62,20 @@ class getAllTasks {
     return tasks;
   }
 
-  async createTask({ title, description, status, priority, tags, startDate, dueDate, projectId, points, authorUserId, assignedUserID, name, }: taskParamsT) {
+  async createTask({
+    title,
+    description,
+    status,
+    priority,
+    tags,
+    startDate,
+    dueDate,
+    projectId,
+    points,
+    authorUserId,
+    assignedUserID,
+    name,
+  }: taskParamsT) {
     const task = await prisma.task.create({
       data: {
         title,
@@ -75,7 +87,7 @@ class getAllTasks {
         startDate,
         dueDate,
         projectId,
-        points:parseInt(points),
+        points: parseInt(points),
         authorUserId,
         assignedUserID,
       },
@@ -92,7 +104,6 @@ class getAllTasks {
     });
     return task;
   }
-
 
   async getTaskById(taskId: string) {
     const tasks = await prisma.task.findFirst({
@@ -136,7 +147,21 @@ class getAllTasks {
         attachments: true,
       },
     });
+    if (!tasks) {
+      return false;
+    }
     return tasks;
+  }
+
+  async createComment({ comment, taskId, userId, }: { comment: string; taskId: string; userId: string; }) {
+    const commants = await prisma.comment.create({
+      data: {
+        text: comment,
+        taskId,
+        userId,
+      },
+    });
+    return commants;
   }
 }
 

@@ -81,3 +81,21 @@ export const getSingleTask = catchAsyncError(
     res.status(200).json(task);
   }
 );
+
+export const createComment = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { comment } = req.body;
+    const { taskId } = req.params;
+    if (!comment) {
+      return next(new ErrorHandler("comment is required", 400));
+    }
+    if(!(await TaskServices.getTaskById(taskId))){
+      return next(new ErrorHandler("task not found", 404));
+    }
+    const task = await TaskServices.createComment({ comment, taskId,userId:req.user?.userId as string });
+    if (!task) {
+      return next(new ErrorHandler("task not found", 404));
+    }
+    res.status(200).json({ task });
+  }
+);

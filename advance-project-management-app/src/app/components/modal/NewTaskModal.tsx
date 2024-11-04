@@ -98,7 +98,7 @@ const NewTaskModal = ({ isOpen, onClose, projectID }: Props) => {
         toast({ title: "Task has been created successfully" });
         onClose();
       })
-      .catch((error) => {
+      .catch((error:any) => {
         toast({ title: error.data.message, variant: "destructive" });
       });
   }
