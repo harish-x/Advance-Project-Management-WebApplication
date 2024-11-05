@@ -163,6 +163,24 @@ class getAllTasks {
     });
     return commants;
   }
+
+  async getComments(taskId: string) {
+    const comments = await prisma.comment.findMany({
+      where: {
+        taskId,
+      },
+      include: {
+        user: {
+          select: {
+            userName: true,
+            userId: true,
+            email: true,
+         }
+       }
+      }
+    });
+    return comments;
+  }
 }
 
 export default new getAllTasks();

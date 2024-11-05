@@ -12,9 +12,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { addDays, format } from "date-fns";
 import {
+  BadgeAlertIcon,
   CalendarClockIcon,
   Calendar as CalendarIcon,
+  MessageCircleIcon,
+  MessageCircleOff,
+  Paperclip,
   Plus,
+  SendHorizontalIcon,
 } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
@@ -27,7 +32,12 @@ import {
 import { useCreateProjectMutation } from "@/lib/features/project";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { useGetSingleTaskQuery } from "@/lib/features/task";
+import {
+  useCreateAttachmentsMutation,
+  useCreateCommentMutation,
+  useGetCommentsQuery,
+  useGetSingleTaskQuery,
+} from "@/lib/features/task";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUserContext } from "@/app/dashboard/UserContext";
@@ -36,19 +46,47 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   name?: string;
-  taskId?: string;
+  taskId: string;
 };
 
 const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
   const { toast } = useToast();
   const { userData, isLoading: isUserLoading } = useUserContext();
   const { data } = useGetSingleTaskQuery(taskId as string);
-  console.log(data);
+  const [comment, setComment] = useState<string>("");
+  const [postComment] = useCreateCommentMutation();
+  const { data: comments, isLoading: IsCommentsLoading } = useGetCommentsQuery(
+    taskId as string
+  );
   const dateformat = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
+  function handlePostComment(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    postComment({ taskId, comment });
+    setComment("");
+  }
+  const [createAttachments] = useCreateAttachmentsMutation();
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (!event.target.files) {
+      return;
+    }
+    const file = event.target.files[0];
+    if (file) {
+      try {
+        // Call the mutation with file and taskId
+        await createAttachments({ file, taskId }).unwrap();
+        console.log("File uploaded successfully");
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    }
+  };
+
   return (
     <div>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -75,11 +113,22 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
                       Add
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="border border-secondary/20 w-[150px]">
+                  <PopoverContent className="border border-secondary/20 w-[150px] px-2">
                     <div className="flex flex-col gap-1">
-                      <Button variant={"ghost"}>Attachment</Button>
-                      <Button variant={"ghost"}>Comment</Button>
-                      <Button variant={"ghost"}>Issue</Button>
+                      <Input
+                        type="file"
+                        placeholder="Add a file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                      />
+                      <Button variant={"ghost"} className="flex justify-start">
+                        <MessageCircleIcon />
+                        Comment
+                      </Button>
+                      <Button variant={"ghost"} className="flex justify-start">
+                        <BadgeAlertIcon />
+                        Create Issue
+                      </Button>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -93,19 +142,95 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
                 <h1 className="font-medium text-lg mt-2 text-secondary">
                   Comments
                 </h1>
-                <div className="flex gap-2 items-center">
+                <form
+                  onSubmit={handlePostComment}
+                  className="flex gap-2 items-center"
+                >
                   <Avatar>
                     <AvatarImage src={userData?.profilePicture} alt="@shadcn" />
                     <AvatarFallback>
                       {userData?.userName.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <Input placeholder="Add a comment..." />
-                </div>
+                  <Input
+                    placeholder="Add a comment..."
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                  />
+                  <Button className="bg-transparent" variant={"outline"}>
+                    <SendHorizontalIcon />
+                  </Button>
+                </form>
                 <div>
-                  <ScrollArea className="h-[200px] rounded-md border border-secondary/20 p-4 w-full">
-                    
-                  </ScrollArea>
+                  {comments && comments.length > 0 ? (
+                    <div>
+                      <div className=" rounded-md border border-secondary/20 px-2 w-full">
+                        {IsCommentsLoading
+                          ? "Loading..."
+                          : comments?.map((comment) => (
+                              <div
+                                className="flex gap-2 items-center my-2 bg-white/10 p-2 rounded space-x-2 "
+                                key={comment.id}
+                              >
+                                <Avatar>
+                                  <AvatarImage
+                                    src={comment?.user?.profilePicture}
+                                    alt="@shadcn"
+                                  />
+                                  <AvatarFallback className="text-secondary">
+                                    {comment?.user?.userName
+                                      .charAt(0)
+                                      .toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="flex flex-col justify-center">
+                                  <p className="text-secondary">
+                                    {comment?.user?.userName}
+                                  </p>
+                                  <p className="text-secondary">
+                                    {comment?.text}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                      </div>
+                    </div>
+                  ) : comments && comments?.length > 3 ? (
+                    <ScrollArea className="h-[200px] rounded-md border border-secondary/20 p-4 w-full">
+                      {IsCommentsLoading
+                        ? "Loading..."
+                        : comments?.map((comment) => (
+                            <div
+                              className="flex gap-2 items-center my-2 bg-white/10 p-2 rounded space-x-2"
+                              key={comment.id}
+                            >
+                              <Avatar>
+                                <AvatarImage
+                                  src={comment?.user?.profilePicture}
+                                  alt="@shadcn"
+                                />
+                                <AvatarFallback className="text-secondary">
+                                  {comment?.user?.userName
+                                    .charAt(0)
+                                    .toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex flex-col justify-center">
+                                <p className="text-secondary">
+                                  {comment?.user?.userName}
+                                </p>
+                                <p className="text-secondary">
+                                  {comment?.text}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                    </ScrollArea>
+                  ) : (
+                    <p className="text-secondary border border-secondary/20 p-2 rounded">
+                      No comments
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -140,7 +265,7 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
                         {data?.author?.userName.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <p>{data?.assignee?.userName}</p>
+                    <p>{data?.author?.userName}</p>
                   </div>
                   <p className="text-secondary flex items-center">
                     Created Date

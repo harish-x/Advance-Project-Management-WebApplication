@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { User } from "./auth";
 import { reAuthQuery } from "./authQuery";
 import { Project } from "./project";
@@ -24,7 +25,7 @@ export interface Task {
   attachments?: Attachment[];
 }
 
-export interface searchResults{
+export interface searchResults {
   task?: Task[];
   projects?: Project[];
   users?: User[];
@@ -46,7 +47,7 @@ export enum Status {
 }
 
 export enum Priority {
-  Urgent="Urgent",
+  Urgent = "Urgent",
   High = "High",
   Medium = "Medium",
   Low = "Low",
@@ -57,7 +58,7 @@ export interface Comment {
   text: string;
   taskId: string;
   authorUserId: string;
-  author?: User;
+  user?: User;
 }
 
 export const TaskApi = reAuthQuery.injectEndpoints({
@@ -104,8 +105,55 @@ export const TaskApi = reAuthQuery.injectEndpoints({
     getSingleTask: builder.query<Task, string>({
       query: (taskId) => `/task/getsingleTask?taskId=${taskId}`,
     }),
-    
+    getComments: builder.query<Comment[], string>({
+      query: (taskId) => `/task/comment/${taskId}`,
+
+      providesTags: ["Comment"],
+    }),
+    createComment: builder.mutation<
+      Comment,
+      { comment: string; taskId: string }
+    >({
+      query: ({ comment, taskId }) => ({
+        url: `/task/comment/${taskId}`,
+        method: "POST",
+        body: { comment },
+      }),
+      invalidatesTags: ["Comment"],
+    }),
+
+    createAttachments: builder.mutation<
+      Attachment,
+      { file: File; taskId: string }
+    >({
+      query: ({ file, taskId }) => {
+        const formData = new FormData();
+        formData.append("file", file); // Append file to FormData
+        formData.append("taskId", taskId); // Append any other necessary fields
+
+        return {
+          url: `/task/attachment/${taskId}`,
+          method: "POST",
+          headers: {
+            // No need to set Content-Type to multipart/form-data explicitly;
+            // it's automatically set when using FormData.
+          },
+          body: formData,
+        };
+      },
+      invalidatesTags: ["Attachment"],
+    }),
   }),
 });
 
-export const { useGetAllTasksQuery, useCreateTaskMutation, useUpdateTaskMutation, useDeleteTaskMutation, useSearchTasksQuery,useGetSingleTaskQuery } = TaskApi;
+export const {
+  useGetAllTasksQuery,
+  useCreateTaskMutation,
+  useUpdateTaskMutation,
+  useDeleteTaskMutation,
+  useSearchTasksQuery,
+  useGetSingleTaskQuery,
+  useCreateCommentMutation,
+  useGetCommentsQuery,
+  useCreateAttachmentsMutation
+} = TaskApi;

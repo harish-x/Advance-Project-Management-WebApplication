@@ -2,6 +2,7 @@ import catchAsyncError from "../middlewares/catchAsyncError";
 import { NextFunction, Request, Response } from "express";
 import TaskServices from "../services/TaskServices";
 import ErrorHandler from "../utils/ErrorHandler";
+import { uploadImagesToAzure } from "../middlewares/FileUpload";
 
 export const getTasks = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -89,13 +90,52 @@ export const createComment = catchAsyncError(
     if (!comment) {
       return next(new ErrorHandler("comment is required", 400));
     }
-    if(!(await TaskServices.getTaskById(taskId))){
+    if (!(await TaskServices.getTaskById(taskId))) {
       return next(new ErrorHandler("task not found", 404));
     }
-    const task = await TaskServices.createComment({ comment, taskId,userId:req.user?.userId as string });
+    const task = await TaskServices.createComment({
+      comment,
+      taskId,
+      userId: req.user?.userId as string,
+    });
     if (!task) {
       return next(new ErrorHandler("task not found", 404));
     }
     res.status(200).json({ task });
+  }
+);
+
+export const getComments = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { taskId } = req.params;
+    if (!taskId) {
+      return next(new ErrorHandler("taskId is required", 400));
+    }
+    const comments = await TaskServices.getComments(taskId);
+    if (!comments) {
+      return next(new ErrorHandler("task not found", 404));
+    }
+    res.status(200).json(comments);
+  }
+);
+
+export const createAttachment = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { taskId } = req.params;
+
+    const fileUrl = await uploadImagesToAzure(req.file);
+    console.log(fileUrl);
+
+    // if (!attachment) {
+    //   return next(new ErrorHandler("attachment is required", 400));
+    // }
+    // if(!(await TaskServices.getTaskById(taskId))){
+    //   return next(new ErrorHandler("task not found", 404));
+    // }
+    // const task = await TaskServices.createAttachment({ attachment, taskId,userId:req.user?.userId as string });
+    // if (!task) {
+    //   return next(new ErrorHandler("task not found", 404));
+    // }
+    // res.status(200).json({ task });
   }
 );
