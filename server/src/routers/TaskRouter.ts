@@ -7,6 +7,7 @@ import {
   getTasks,
   updateTask,
 } from "../controllers/TaskController";
+import { upload } from "../middlewares/FileUpload";
 
 import express from "express";
 import isAuthenticatedUser from "../middlewares/isAuthenticatedUser";
@@ -19,7 +20,9 @@ router.route("/getsingleTask").get(getSingleTask);
 router
   .route("/comment/:taskId")
   .post(isAuthenticatedUser, createComment)
-  .get(getComments);
-router.route("/attachment/:taskId").post(createAttachment);
+  .get(isAuthenticatedUser,getComments);
+router
+  .route("/attachment/:taskId")
+  .post(isAuthenticatedUser,upload.single("file"), createAttachment);
 
 export default router;

@@ -21,20 +21,25 @@ export const upload = multer({
   },
 });
 
-export const uploadImagesToAzure = async (files: any) => {
+export const uploadImagesToAzure = async (file: Express.Multer.File) => {
+  if (!file) {
+    throw new Error("No file provided");
+  }
+
   const containerClient =
-    blobserviceclient.getContainerClient("hotelbookingapp");
+    blobserviceclient.getContainerClient("projectmanagementapp");
   let imgurl;
-try {
-      const uniquename = `${Date.now()}-${files.originalname}`;
-  const blockBlobClient = containerClient.getBlockBlobClient(uniquename);
-  await blockBlobClient.uploadData(files.buffer);
+
+  try {
+    const uniquename = `${Date.now()}-${file.originalname}`; 
+    const blockBlobClient = containerClient.getBlockBlobClient(uniquename.trim());
+    await blockBlobClient.uploadData(file.buffer);
     imgurl = blockBlobClient.url;
     console.log(imgurl);
-} catch (error) {
+  } catch (error) {
     console.log(error);
-}
-
+    throw error;
+  }
 
   return imgurl;
 };

@@ -153,7 +153,15 @@ class getAllTasks {
     return tasks;
   }
 
-  async createComment({ comment, taskId, userId, }: { comment: string; taskId: string; userId: string; }) {
+  async createComment({
+    comment,
+    taskId,
+    userId,
+  }: {
+    comment: string;
+    taskId: string;
+    userId: string;
+  }) {
     const commants = await prisma.comment.create({
       data: {
         text: comment,
@@ -175,11 +183,40 @@ class getAllTasks {
             userName: true,
             userId: true,
             email: true,
-         }
-       }
-      }
+          },
+        },
+      },
     });
     return comments;
+  }
+
+  async createAttachment({ fileUrl, taskId, userId, fileName, }: { fileUrl: string; taskId: string; userId: string; fileName:string; }) {
+    const attchment = await prisma.attachment.create({
+      data: {
+        fileUrl,
+        taskId,
+        uploadedBy: userId,
+        fileName
+      },
+    });
+    return attchment;
+  }
+  async getAttachments(taskId: string) {
+    const attachments = await prisma.attachment.findMany({
+      where: {
+        taskId,
+      },
+      include: {
+        uploadBy: {
+          select: {
+            userName: true,
+            userId: true,
+            email: true,
+          }
+        }
+      },
+    });
+    return attachments;
   }
 }
 

@@ -123,19 +123,38 @@ export const createAttachment = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const { taskId } = req.params;
 
-    const fileUrl = await uploadImagesToAzure(req.file);
-    console.log(fileUrl);
+    if (!(await TaskServices.getTaskById(taskId))) {
+      return next(new ErrorHandler("task not found", 404));
+    }
+    const fileUrl = await uploadImagesToAzure(req.file as Express.Multer.File);
 
-    // if (!attachment) {
-    //   return next(new ErrorHandler("attachment is required", 400));
-    // }
-    // if(!(await TaskServices.getTaskById(taskId))){
-    //   return next(new ErrorHandler("task not found", 404));
-    // }
-    // const task = await TaskServices.createAttachment({ attachment, taskId,userId:req.user?.userId as string });
-    // if (!task) {
-    //   return next(new ErrorHandler("task not found", 404));
-    // }
-    // res.status(200).json({ task });
+    if (!fileUrl) {
+      return next(new ErrorHandler("Internal server Error", 500));
+    }
+
+    const attchment = await TaskServices.createAttachment({
+      fileUrl,
+      taskId,
+      userId: req.user?.userId as string,
+      fileName: req.file?.originalname as string,
+    });
+    if (!attchment) {
+      return next(new ErrorHandler("task not found", 404));
+    }
+    res.status(200).json(attchment);
+  }
+);
+
+export const getAttachments = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { taskId } = req.params;
+    if (!taskId) {
+      return next(new ErrorHandler("taskId is required", 400));
+    }
+    const attachments = await TaskServices.getAttachments(taskId);
+    if (!attachments) {
+      return next(new ErrorHandler("task not found", 404));
+    }
+    res.status(200).json(attachments);
   }
 );

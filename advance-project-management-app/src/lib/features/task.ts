@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { User } from "./auth";
 import { reAuthQuery } from "./authQuery";
 import { Project } from "./project";
+import { use } from "react";
 
 export interface Task {
   id: string;
@@ -36,7 +37,8 @@ export interface Attachment {
   fileUrl?: string;
   fileName?: string;
   taskId: string;
-  uploadedBy: string;
+  uploadedBy: User;
+  createdAt: Date;
 }
 
 export enum Status {
@@ -58,6 +60,7 @@ export interface Comment {
   text: string;
   taskId: string;
   authorUserId: string;
+  createdAt: Date;
   user?: User;
 }
 
@@ -122,21 +125,22 @@ export const TaskApi = reAuthQuery.injectEndpoints({
       invalidatesTags: ["Comment"],
     }),
 
+    getAttachments: builder.query<Attachment[], string>({
+      query: (taskId) => `/task/attachment/${taskId}`,
+    }),
     createAttachments: builder.mutation<
       Attachment,
       { file: File; taskId: string }
     >({
       query: ({ file, taskId }) => {
         const formData = new FormData();
-        formData.append("file", file); // Append file to FormData
-        formData.append("taskId", taskId); // Append any other necessary fields
+        formData.append("file", file);
+        formData.append("taskId", taskId); 
 
         return {
           url: `/task/attachment/${taskId}`,
           method: "POST",
           headers: {
-            // No need to set Content-Type to multipart/form-data explicitly;
-            // it's automatically set when using FormData.
           },
           body: formData,
         };
@@ -155,5 +159,6 @@ export const {
   useGetSingleTaskQuery,
   useCreateCommentMutation,
   useGetCommentsQuery,
-  useCreateAttachmentsMutation
+  useCreateAttachmentsMutation,
+  useGetAttachmentsQuery
 } = TaskApi;

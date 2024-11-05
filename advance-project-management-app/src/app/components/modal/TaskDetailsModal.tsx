@@ -20,6 +20,7 @@ import {
   Paperclip,
   Plus,
   SendHorizontalIcon,
+  XIcon,
 } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
@@ -35,12 +36,15 @@ import { useToast } from "@/hooks/use-toast";
 import {
   useCreateAttachmentsMutation,
   useCreateCommentMutation,
+  useGetAttachmentsQuery,
   useGetCommentsQuery,
   useGetSingleTaskQuery,
 } from "@/lib/features/task";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUserContext } from "@/app/dashboard/UserContext";
+import Image from "next/image";
+import Spinner from "../Spinner";
 
 type Props = {
   isOpen: boolean;
@@ -55,9 +59,13 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
   const { data } = useGetSingleTaskQuery(taskId as string);
   const [comment, setComment] = useState<string>("");
   const [postComment] = useCreateCommentMutation();
+  const [prevFile, setPrevFile] = useState<string>("");
   const { data: comments, isLoading: IsCommentsLoading } = useGetCommentsQuery(
     taskId as string
   );
+  const { data: attachments, isLoading: IsAttachmentsLoading } =
+    useGetAttachmentsQuery(taskId as string);
+  const [addOptionsOpen, setAddOptionsOpen] = useState(false);
   const dateformat = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "long",
@@ -68,21 +76,31 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
     postComment({ taskId, comment });
     setComment("");
   }
-  const [createAttachments] = useCreateAttachmentsMutation();
+  const [createAttachments, { isLoading: IsAttachmentLoading }] =
+    useCreateAttachmentsMutation();
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    setAddOptionsOpen(false);
     if (!event.target.files) {
       return;
     }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setPrevFile(reader.result as string);
+      }
+    };
+    reader.readAsDataURL(event.target.files[0]);
     const file = event.target.files[0];
+
     if (file) {
       try {
-        // Call the mutation with file and taskId
-        await createAttachments({ file, taskId }).unwrap();
-        console.log("File uploaded successfully");
-      } catch (error) {
-        console.error("Error uploading file:", error);
+        await createAttachments({ file, taskId })
+          .unwrap()
+          .finally(() => setPrevFile(""));
+      } catch (error: any) {
+        toast({ title: error.data.message, variant: "destructive" });
       }
     }
   };
@@ -103,35 +121,102 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
                 <p className="text-secondary font-semibold text-xl">
                   {data?.title}
                 </p>
-                <Popover>
+                <Popover open={addOptionsOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant={"secondary"}
                       className="font-semibold mt-2"
+                      onClick={() => setAddOptionsOpen(!addOptionsOpen)}
                     >
-                      <Plus />
-                      Add
+                      {addOptionsOpen ? (
+                        <span className="flex items-center gap-2">
+                          <XIcon />
+                          close
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <Plus />
+                          Add
+                        </span>
+                      )}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="border border-secondary/20 w-[150px] px-2">
                     <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="uploadfile"
+                        className="flex items-center py-2 justify-center gap-2 rounded-md cursor-pointer  text-sm hover:bg-secondary hover:text-primary"
+                      >
+                        <Paperclip size={18} />
+                        Attach files
+                      </label>
                       <Input
                         type="file"
                         placeholder="Add a file"
+                        id="uploadfile"
                         accept="image/*"
+                        className="hidden"
                         onChange={handleFileChange}
                       />
-                      <Button variant={"ghost"} className="flex justify-start">
+                      <Button
+                        variant={"ghost"}
+                        className="flex justify-start"
+                        onClick={() => setAddOptionsOpen(false)}
+                      >
                         <MessageCircleIcon />
                         Comment
                       </Button>
-                      <Button variant={"ghost"} className="flex justify-start">
+                      <Button
+                        variant={"ghost"}
+                        className="flex justify-start text-destructive"
+                      >
                         <BadgeAlertIcon />
                         Create Issue
                       </Button>
                     </div>
                   </PopoverContent>
                 </Popover>
+                <h1 className="font-medium text-lg mt-2 text-secondary">
+                  Attachments
+                </h1>
+                <div>
+                  {IsAttachmentLoading && "Uploading..."}
+                  {prevFile !== "" && (
+                    <div className="relative h-32 w-32 max-w-32 ">
+                      <div className="absolute  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center flex flex-col items-center">
+                        <Spinner />
+                        <span className="text-secondary font-semibold text-center">
+                          Uploading...
+                        </span>
+                      </div>
+                      <Image
+                        fill
+                        src={prevFile}
+                        alt="image"
+                        className="z-10 opacity-25 rounded"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  {IsAttachmentsLoading ? (
+                    <Spinner />
+                  ) : (
+                    <div>
+                      {attachments &&
+                        attachments?.map((attachment) => (
+                          <div>
+                            <div className="relative h-32 w-32 max-w-32 ">
+                              <img
+                                src={attachment.fileUrl}
+                                alt={attachment.fileName}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
                 <h1 className="font-medium text-lg mt-2 text-secondary">
                   Description
                 </h1>
@@ -152,6 +237,7 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
                       {userData?.userName.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
+
                   <Input
                     placeholder="Add a comment..."
                     value={comment}
@@ -162,41 +248,8 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
                   </Button>
                 </form>
                 <div>
-                  {comments && comments.length > 0 ? (
-                    <div>
-                      <div className=" rounded-md border border-secondary/20 px-2 w-full">
-                        {IsCommentsLoading
-                          ? "Loading..."
-                          : comments?.map((comment) => (
-                              <div
-                                className="flex gap-2 items-center my-2 bg-white/10 p-2 rounded space-x-2 "
-                                key={comment.id}
-                              >
-                                <Avatar>
-                                  <AvatarImage
-                                    src={comment?.user?.profilePicture}
-                                    alt="@shadcn"
-                                  />
-                                  <AvatarFallback className="text-secondary">
-                                    {comment?.user?.userName
-                                      .charAt(0)
-                                      .toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div className="flex flex-col justify-center">
-                                  <p className="text-secondary">
-                                    {comment?.user?.userName}
-                                  </p>
-                                  <p className="text-secondary">
-                                    {comment?.text}
-                                  </p>
-                                </div>
-                              </div>
-                            ))}
-                      </div>
-                    </div>
-                  ) : comments && comments?.length > 3 ? (
-                    <ScrollArea className="h-[200px] rounded-md border border-secondary/20 p-4 w-full">
+                  {comments && comments?.length > 0 ? (
+                    <ScrollArea className="max-h-[200px] h-[max-content] rounded-md border-none px-2 py-1 w-full">
                       {IsCommentsLoading
                         ? "Loading..."
                         : comments?.map((comment) => (
