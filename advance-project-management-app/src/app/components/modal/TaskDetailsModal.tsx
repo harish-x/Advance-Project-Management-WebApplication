@@ -20,6 +20,7 @@ import {
   Paperclip,
   Plus,
   SendHorizontalIcon,
+  Trash2,
   XIcon,
 } from "lucide-react";
 import { DateRange } from "react-day-picker";
@@ -60,6 +61,7 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
   const [comment, setComment] = useState<string>("");
   const [postComment] = useCreateCommentMutation();
   const [prevFile, setPrevFile] = useState<string>("");
+  const [isDeleteButtonVisible, setIsDeleteButtonVisible] = useState(false);
   const { data: comments, isLoading: IsCommentsLoading } = useGetCommentsQuery(
     taskId as string
   );
@@ -71,6 +73,7 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
     month: "long",
     day: "numeric",
   });
+  const [showDeleteButton, setShowDeleteButton] = useState<string | null>(null);
   function handlePostComment(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     postComment({ taskId, comment });
@@ -202,19 +205,37 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
                   {IsAttachmentsLoading ? (
                     <Spinner />
                   ) : (
-                    <div>
-                      {attachments &&
-                        attachments?.map((attachment) => (
-                          <div>
-                            <div className="relative h-32 w-32 max-w-32 ">
+                    <ScrollArea className="max-h-[200px] h-[max-content] rounded-md border-none px-2 py-1 w-full">
+                      <div className="grid grid-cols-5 place-items-center justify-items-center gap-2">
+                        {attachments &&
+                          attachments?.map((attachment) => (
+                            <div className="relative h-32 w-32 max-w-32 flex justify-center items-center">
                               <img
                                 src={attachment.fileUrl}
                                 alt={attachment.fileName}
+                                onMouseEnter={() => {
+                                  setShowDeleteButton(attachment.id);
+                                  setIsDeleteButtonVisible(true);
+                                }}
+                                onMouseLeave={() => {
+                                  setIsDeleteButtonVisible(false);
+                                }}
                               />
+                              {isDeleteButtonVisible &&
+                                showDeleteButton === attachment.id &&
+                                userData.userId ===
+                                  attachment.uploadBy.userId && (
+                                  <Button
+                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center flex flex-col items-center"
+                                    variant={"destructive"}
+                                  >
+                                    <Trash2 />
+                                  </Button>
+                                )}
                             </div>
-                          </div>
-                        ))}
-                    </div>
+                          ))}
+                      </div>
+                    </ScrollArea>
                   )}
                 </div>
                 <h1 className="font-medium text-lg mt-2 text-secondary">

@@ -2,6 +2,7 @@ import {
   createAttachment,
   createComment,
   createTask,
+  getAttachments,
   getComments,
   getSingleTask,
   getTasks,
@@ -23,6 +24,7 @@ router
   .get(isAuthenticatedUser,getComments);
 router
   .route("/attachment/:taskId")
-  .post(isAuthenticatedUser,upload.single("file"), createAttachment);
+  .post(isAuthenticatedUser, upload.single("file"), createAttachment)
+  .get(isAuthenticatedUser,getAttachments)
 
 export default router;

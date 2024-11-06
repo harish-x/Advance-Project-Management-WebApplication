@@ -37,7 +37,7 @@ export interface Attachment {
   fileUrl?: string;
   fileName?: string;
   taskId: string;
-  uploadedBy: User;
+  uploadBy: User;
   createdAt: Date;
 }
 
