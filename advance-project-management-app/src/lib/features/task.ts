@@ -96,7 +96,7 @@ export const TaskApi = reAuthQuery.injectEndpoints({
 
     deleteTask: builder.mutation<Task, string>({
       query: (taskId) => ({
-        url: `/task/${taskId}`,
+        url: `/task/delete/${taskId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Task"],
@@ -127,6 +127,7 @@ export const TaskApi = reAuthQuery.injectEndpoints({
 
     getAttachments: builder.query<Attachment[], string>({
       query: (taskId) => `/task/attachment/${taskId}`,
+      providesTags: ["Attachment"],
     }),
     createAttachments: builder.mutation<
       Attachment,
@@ -135,16 +136,31 @@ export const TaskApi = reAuthQuery.injectEndpoints({
       query: ({ file, taskId }) => {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("taskId", taskId); 
+        formData.append("taskId", taskId);
 
         return {
           url: `/task/attachment/${taskId}`,
           method: "POST",
-          headers: {
-          },
+          headers: {},
           body: formData,
         };
       },
+      invalidatesTags: ["Attachment"],
+    }),
+
+    deleteComments: builder.mutation<Comment, string>({
+      query: (commentId) => ({
+        url: `/task/comment/${commentId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Comment"],
+    }),
+
+    deleteAttachments: builder.mutation<Attachment, string>({
+      query: (attachmentId) => ({
+        url: `/task/attachment/${attachmentId}`,
+        method: "DELETE",
+      }),
       invalidatesTags: ["Attachment"],
     }),
   }),
@@ -160,5 +176,7 @@ export const {
   useCreateCommentMutation,
   useGetCommentsQuery,
   useCreateAttachmentsMutation,
-  useGetAttachmentsQuery
+  useGetAttachmentsQuery,
+  useDeleteAttachmentsMutation,
+  useDeleteCommentsMutation
 } = TaskApi;

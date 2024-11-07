@@ -2,6 +2,9 @@ import {
   createAttachment,
   createComment,
   createTask,
+  deleteAttachments,
+  deleteComments,
+  deleteTask,
   getAttachments,
   getComments,
   getSingleTask,
@@ -18,13 +21,19 @@ router.route("/gettask").get(getTasks);
 router.route("/createTask").post(createTask);
 router.route("/:taskId/updateStatus").patch(updateTask);
 router.route("/getsingleTask").get(getSingleTask);
+router.route("/delete/:taskId").delete(isAuthenticatedUser, deleteTask);
 router
   .route("/comment/:taskId")
   .post(isAuthenticatedUser, createComment)
-  .get(isAuthenticatedUser,getComments);
+  .get( getComments);
+
+router.route("/comment/:commentId").delete(isAuthenticatedUser, deleteComments);
 router
   .route("/attachment/:taskId")
   .post(isAuthenticatedUser, upload.single("file"), createAttachment)
-  .get(isAuthenticatedUser,getAttachments)
+  .get(isAuthenticatedUser, getAttachments);
+router
+  .route("/attachment/:attachmentId")
+  .delete(isAuthenticatedUser, deleteAttachments);
 
 export default router;

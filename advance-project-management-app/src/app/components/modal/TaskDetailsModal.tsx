@@ -16,27 +16,25 @@ import {
   CalendarClockIcon,
   Calendar as CalendarIcon,
   MessageCircleIcon,
-  MessageCircleOff,
   Paperclip,
   Plus,
   SendHorizontalIcon,
   Trash2,
   XIcon,
 } from "lucide-react";
-import { DateRange } from "react-day-picker";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useCreateProjectMutation } from "@/lib/features/project";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import {
   useCreateAttachmentsMutation,
   useCreateCommentMutation,
+  useDeleteAttachmentsMutation,
+  useDeleteCommentsMutation,
   useGetAttachmentsQuery,
   useGetCommentsQuery,
   useGetSingleTaskQuery,
@@ -46,6 +44,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUserContext } from "@/app/dashboard/UserContext";
 import Image from "next/image";
 import Spinner from "../Spinner";
+import { formatDistanceToNow } from "date-fns";
 
 type Props = {
   isOpen: boolean;
@@ -65,6 +64,8 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
   const { data: comments, isLoading: IsCommentsLoading } = useGetCommentsQuery(
     taskId as string
   );
+  const [deleteComment] = useDeleteCommentsMutation();
+
   const { data: attachments, isLoading: IsAttachmentsLoading } =
     useGetAttachmentsQuery(taskId as string);
   const [addOptionsOpen, setAddOptionsOpen] = useState(false);
@@ -81,6 +82,7 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
   }
   const [createAttachments, { isLoading: IsAttachmentLoading }] =
     useCreateAttachmentsMutation();
+  const [deleteAttachment] = useDeleteAttachmentsMutation();
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -107,6 +109,21 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
       }
     }
   };
+  async function handleDeleteAttachment(attachmentId: string) {
+    await deleteAttachment(attachmentId)
+      .unwrap()
+      .then(() => {
+        toast({ title: "Attachment deleted successfully" });
+      });
+  }
+
+  async function handleDeleteComment(commentId: string) {
+    await deleteComment(commentId)
+      .unwrap()
+      .then(() => {
+        toast({ title: "Comment deleted successfully" });
+      });
+  }
 
   return (
     <div>
@@ -119,7 +136,7 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
             <DialogDescription>Click save when you're done.</DialogDescription>
           </DialogHeader>
           <div className="grid grid-rows-1 grid-cols-2 gap-4 mt-5">
-            <div className="bg-backgroundfw">
+            <div className="bg-backgroundfw overflow-y-scroll">
               <div className="p-5 space-y-2">
                 <p className="text-secondary font-semibold text-xl">
                   {data?.title}
@@ -183,7 +200,6 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
                   Attachments
                 </h1>
                 <div>
-                  {IsAttachmentLoading && "Uploading..."}
                   {prevFile !== "" && (
                     <div className="relative h-32 w-32 max-w-32 ">
                       <div className="absolute  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center flex flex-col items-center">
@@ -205,11 +221,16 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
                   {IsAttachmentsLoading ? (
                     <Spinner />
                   ) : (
-                    <ScrollArea className="max-h-[200px] h-[max-content] rounded-md border-none px-2 py-1 w-full">
+                    <ScrollArea className="max-h-[300px] h-[max-content] rounded-md border-none px-2 py-1 w-full">
                       <div className="grid grid-cols-5 place-items-center justify-items-center gap-2">
                         {attachments &&
                           attachments?.map((attachment) => (
-                            <div className="relative h-32 w-32 max-w-32 flex justify-center items-center">
+                            <div
+                              className="relative h-32 w-32 max-w-32 flex justify-center items-center bg-gray-300 rounded p-1"
+                              onMouseLeave={() => {
+                                setIsDeleteButtonVisible(false);
+                              }}
+                            >
                               <img
                                 src={attachment.fileUrl}
                                 alt={attachment.fileName}
@@ -217,17 +238,18 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
                                   setShowDeleteButton(attachment.id);
                                   setIsDeleteButtonVisible(true);
                                 }}
-                                onMouseLeave={() => {
-                                  setIsDeleteButtonVisible(false);
-                                }}
+                                className="rounded"
                               />
                               {isDeleteButtonVisible &&
                                 showDeleteButton === attachment.id &&
                                 userData.userId ===
                                   attachment.uploadBy.userId && (
                                   <Button
-                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center flex flex-col items-center"
+                                    className="absolute top-2 right-2 shadow-md text-center flex flex-col items-center w-5 h-5"
                                     variant={"destructive"}
+                                    onClick={() =>
+                                      handleDeleteAttachment(attachment.id)
+                                    }
                                   >
                                     <Trash2 />
                                   </Button>
@@ -275,27 +297,52 @@ const TaskDetailsModal = ({ isOpen, onClose, taskId }: Props) => {
                         ? "Loading..."
                         : comments?.map((comment) => (
                             <div
-                              className="flex gap-2 items-center my-2 bg-white/10 p-2 rounded space-x-2"
+                              className="flex gap-2 items-center justify-between my-2 bg-white/10 p-2 rounded space-x-2"
                               key={comment.id}
                             >
-                              <Avatar>
-                                <AvatarImage
-                                  src={comment?.user?.profilePicture}
-                                  alt="@shadcn"
-                                />
-                                <AvatarFallback className="text-secondary">
-                                  {comment?.user?.userName
-                                    .charAt(0)
-                                    .toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex flex-col justify-center">
-                                <p className="text-secondary">
-                                  {comment?.user?.userName}
-                                </p>
-                                <p className="text-secondary">
-                                  {comment?.text}
-                                </p>
+                              <div className="flex gap-2">
+                                <Avatar>
+                                  <AvatarImage
+                                    src={comment?.user?.profilePicture}
+                                    alt="@shadcn"
+                                  />
+                                  <AvatarFallback className="text-secondary">
+                                    {comment?.user?.userName
+                                      .charAt(0)
+                                      .toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="flex flex-col justify-center">
+                                  <p className="text-secondary">
+                                    {comment?.user?.userName}{" "}
+                                    <span className="text-pretty text-xs text-gray-200 opacity-70 font-extralight">
+                                      {formatDistanceToNow(
+                                        new Date(comment?.createdAt),
+                                        {
+                                          includeSeconds: true,
+                                          addSuffix: true,
+                                        }
+                                      )}
+                                    </span>
+                                  </p>
+                                  <p className="text-secondary">
+                                    {comment?.text}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="justify-self-end">
+                                {userData?.userId === comment?.user?.userId && (
+                                  <Button
+                                    className="bg-transparent"
+                                    variant={"destructive"}
+                                    onClick={() =>
+                                      handleDeleteComment(comment.id)
+                                    }
+                                  >
+                                    <Trash2 />
+                                  </Button>
+                                )}
                               </div>
                             </div>
                           ))}

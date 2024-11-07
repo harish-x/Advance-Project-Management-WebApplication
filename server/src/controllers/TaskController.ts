@@ -158,3 +158,46 @@ export const getAttachments = catchAsyncError(
     res.status(200).json(attachments);
   }
 );
+
+export const deleteTask = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { taskId } = req.params;
+    if (!taskId) {
+      return next(new ErrorHandler("taskId is required", 400));
+    }
+    const task = await TaskServices.deleteTask(taskId, req.user?.userId as string);
+    if (!task) {
+      return next(new ErrorHandler("task not found", 404));
+    }
+    res.status(200).json({ message: "task deleted successfully" });
+  }
+);
+
+export const deleteComments = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { commentId } = req.params;
+    if (!commentId) {
+      return next(new ErrorHandler("commentId is required", 400));
+    }
+    const comment = await TaskServices.deleteComment(commentId, req.user?.userId as string);
+    if (!comment) {
+      return next(new ErrorHandler("comment not found", 404));
+    }
+    res.status(200).json({ message: "comment deleted successfully" });
+  }
+);
+
+
+export const deleteAttachments = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { attachmentId } = req.params;
+    if (!attachmentId) {
+      return next(new ErrorHandler("attachmentId is required", 400));
+    }
+    const attachment = await TaskServices.deleteAttachment(attachmentId, req.user?.userId as string);
+    if (!attachment) {
+      return next(new ErrorHandler("attachment not found", 404));
+    }
+    res.status(200).json({ message: "attachment deleted successfully" });
+  }
+);

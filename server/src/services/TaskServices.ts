@@ -190,13 +190,23 @@ class getAllTasks {
     return comments;
   }
 
-  async createAttachment({ fileUrl, taskId, userId, fileName, }: { fileUrl: string; taskId: string; userId: string; fileName:string; }) {
+  async createAttachment({
+    fileUrl,
+    taskId,
+    userId,
+    fileName,
+  }: {
+    fileUrl: string;
+    taskId: string;
+    userId: string;
+    fileName: string;
+  }) {
     const attchment = await prisma.attachment.create({
       data: {
         fileUrl,
         taskId,
         uploadedBy: userId,
-        fileName
+        fileName,
       },
     });
     return attchment;
@@ -212,11 +222,41 @@ class getAllTasks {
             userName: true,
             userId: true,
             email: true,
-          }
-        }
+          },
+        },
       },
     });
     return attachments;
+  }
+
+  async deleteTask(taskId: string, userId: string) {
+    const task = await prisma.task.delete({
+      where: {
+        id: taskId,
+        authorUserId: userId,
+      },
+    });
+    return task;
+  }
+
+  async deleteComment(commentId: string, userId: string) {
+    const comment = await prisma.comment.delete({
+      where: {
+        id: commentId,
+        userId,
+      },
+    });
+    return comment;
+  }
+
+  async deleteAttachment(commentId: string, userId: string) {
+    const comment = await prisma.attachment.delete({
+      where: {
+        id: commentId,
+        uploadedBy: userId,
+      },
+    });
+    return comment;
   }
 }
 

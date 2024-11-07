@@ -1,4 +1,4 @@
-import { Task as TaskType } from "@/lib/features/task";
+import { Task as TaskType, useDeleteTaskMutation } from "@/lib/features/task";
 import {
   EllipsisVertical,
   MessageSquareMore,
@@ -10,14 +10,24 @@ import { format } from "date-fns";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Image from "next/image";
 import { useState } from "react";
 import TaskDetailsModal from "../modal/TaskDetailsModal";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 type TaskProps = {
   task: TaskType;
 };
@@ -38,6 +48,7 @@ const Task = ({ task }: TaskProps) => {
     : "";
   const numberOfComments = task.comments && task.comments.length;
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteTask] = useDeleteTaskMutation();
   const priorityTag = ({ priority }: { priority: TaskType["priority"] }) => (
     <div
       className={`rounded-full px-2 py-1 text-xs font-semibold ${
@@ -55,7 +66,16 @@ const Task = ({ task }: TaskProps) => {
       {priority}
     </div>
   );
-
+  async function handleDeleteTask() {
+    await deleteTask(task.id)
+      .unwrap()
+      .then(() => {
+        toast({ title: "Task has been deleted successfully" });
+      })
+      .catch((error) => {
+        toast({ title: error.data.message, variant: "destructive" });
+      });
+  }
   return (
     <>
       <TaskDetailsModal
@@ -67,20 +87,10 @@ const Task = ({ task }: TaskProps) => {
         ref={(instance) => {
           drag(instance);
         }}
-        className={`mb-4 rounded-md bg-background shadow cursor-pointer ${
+        className={`mb-4 rounded-md bg-background shadow  ${
           isDragging ? "opacity-100" : "opacity-50"
         }`}
-        onClick={() => setIsModalOpen(!isModalOpen)}
       >
-        {task.attachments && task.attachments.length > 0 && (
-          <Image
-            src={`${task.attachments[0].fileUrl}`}
-            alt={`${task.attachments[0].fileName}`}
-            width={400}
-            height={200}
-            className="h-auto w-full rounded-t-md"
-          />
-        )}
         <div className="p-4 md:p-6">
           <div className="flex items-start justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
@@ -100,24 +110,55 @@ const Task = ({ task }: TaskProps) => {
                   <EllipsisVertical size={20} />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="border-secondary/10 py-2 ">
-                  <DropdownMenuItem>Create Issue</DropdownMenuItem>
-                  <DropdownMenuItem className="hover:bg-red-500">
-                    Delete
-                  </DropdownMenuItem>
+                  <AlertDialog>
+                    <AlertDialogTrigger className="w-full">
+                      <Button
+                        className="w-full text-destructive hover:bg-destructive hover:text-secondary"
+                        variant={"ghost"}
+                      >
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="text-secondary">
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          remove your Task from servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-destructive"
+                          onClick={handleDeleteTask}
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </DropdownMenuContent>
               </DropdownMenu>
             </button>
           </div>
-
-          <div className="my-3 justify-between">
-            <h3 className="text-md font-bold">{task.title}</h3>
-            {typeof task.points === "number" && (
-              <div className="text-xs font-bold">{task.points} pts</div>
-            )}
-          </div>
-          <div className="mb-2 text-xs tex-gray-500">
-            {formattedStartDate && <span>{formattedStartDate}-</span>}
-            {formattedDueDate && <span>{formattedDueDate}</span>}
+          <div
+            onClick={() => setIsModalOpen(!isModalOpen)}
+            className="cursor-pointer"
+          >
+            <div className="my-3 justify-between">
+              <h3 className="text-md font-bold">{task.title}</h3>
+              {typeof task.points === "number" && (
+                <div className="text-xs font-bold">{task.points} pts</div>
+              )}
+            </div>
+            <div className="mb-2 text-xs tex-gray-500">
+              {formattedStartDate && <span>{formattedStartDate}-</span>}
+              {formattedDueDate && <span>{formattedDueDate}</span>}
+            </div>
           </div>
 
           <p className="text-sm text-secondary/80">{task.description}</p>
