@@ -29,7 +29,14 @@ export const ProjectAPi = reAuthQuery.injectEndpoints({
     searchProjects: builder.query<searchResults, string>({
       query: (query) => `/search/projects?query=${query}`,
     }),
+    inviteTeams: builder.mutation({
+      query: (data) => ({
+        url: "project/inviteTeam",
+        method: "PUT",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useGetProjectsQuery, useCreateProjectMutation, useSearchProjectsQuery} = ProjectAPi
+export const { useGetProjectsQuery, useCreateProjectMutation, useSearchProjectsQuery, useInviteTeamsMutation} = ProjectAPi

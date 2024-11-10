@@ -39,7 +39,7 @@ const Board = ({ id, setIsModalNewTaskOpen }: Props) => {
     <>
       <div className="pt-5 mx-5">
         <Header
-          name="Board"
+          name="Kanban"
           isSmallText
           buttonComponent={
             <Button

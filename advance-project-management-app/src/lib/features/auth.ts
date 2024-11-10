@@ -15,6 +15,7 @@ export interface User {
 }
 export interface Team {
   teamName: string;
+  id: number
 }
 
 type Allusers = User[] & {team:{ teamName: string }};
@@ -73,6 +74,9 @@ export const authApiSlice = reAuthQuery.injectEndpoints({
       query: () => `/auth/getallusers`,
       providesTags: ["Users"],
     }),
+    getAllTeams: builder.query<Team[], void>({
+      query: () => `/auth/getAllTeams`,
+    }),
   }),
 });
 
@@ -86,4 +90,5 @@ export const {
   useResetPasswordMutation,
   useSearchUsersQuery,
   useGetAllEmployesQuery,
+  useGetAllTeamsQuery
 } = authApiSlice;

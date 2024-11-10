@@ -169,6 +169,16 @@ class UserServices {
 
     return users;
   }
+
+  async getAllTeams() {
+    const teams = await prisma.team.findMany({
+      select: {
+        id: true,
+        teamName: true,
+      },
+    });
+    return teams;
+  }
 }
 
 export default new UserServices();

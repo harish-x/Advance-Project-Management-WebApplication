@@ -16,7 +16,7 @@ type Props = {
 const page = ({ params }: Props) => {
   const { id } = params;
   
-  const [isActiveTab, setIsActiveTab] = React.useState("board");
+  const [isActiveTab, setIsActiveTab] = React.useState("Kanban");
   const [isModelNewTaskOpen, setIsModelNewTaskOpen] = React.useState(false);
 
   return (
@@ -29,8 +29,9 @@ const page = ({ params }: Props) => {
       <ProjectHeader
         isActiveTab={isActiveTab}
         setIsActiveTab={setIsActiveTab}
+        projectID={id}
       />
-      {isActiveTab === "board" && (
+      {isActiveTab === "Kanban" && (
         <Board id={id} setIsModalNewTaskOpen={setIsModelNewTaskOpen} />
       )}
       {isActiveTab === "List" && (

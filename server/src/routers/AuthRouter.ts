@@ -10,6 +10,7 @@ import {
   getUser,
   verifyOtp,
   getAllusers,
+  getAllTeam,
 } from "../controllers/AuthController";
 import isAuthenticatedUser from "../middlewares/isAuthenticatedUser";
 const router = express.Router();
@@ -25,5 +26,6 @@ router.route("/verifyotp").post(verifyOtp);
 router.route("/forgotpassword").post(forgotPassword);
 router.route("/resetpassword/:resetToken").post(resetPassword);
 
-router.route('/getallusers').get(getAllusers)
+router.route('/getallusers').get(getAllusers);
+router.route('/getAllTeams').get(getAllTeam)
 export default router;

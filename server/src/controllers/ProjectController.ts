@@ -7,7 +7,7 @@ import ProjectServices from "../services/ProjectServices";
 
 export const getProjects = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    const projects = await ProjectServices.getAllProjects();
+    const projects = await ProjectServices.getAllProjects(req.user?.teamId as number);
     if (!projects) {
       return next(new ErrorHandler("project not found", 404));
     }
@@ -34,5 +34,17 @@ export const createProject = catchAsyncError(
       res.status(500).json({ message: "something went wrong",error });
     }
     
+  }
+);
+
+export const addTeamsToProject = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { projectId, teamIds } = req.body;
+    try {
+      const project = await ProjectServices.addTeamsToProject(projectId, teamIds);
+      res.status(201).json(project);
+    } catch (error) {
+      res.status(500).json({ message: "something went wrong",error });
+    }
   }
 );

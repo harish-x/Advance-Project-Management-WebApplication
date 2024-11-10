@@ -208,3 +208,10 @@ export const getAllusers = catchAsyncError(
     res.status(200).json(users);
   }
 );
+
+export const getAllTeam = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const teams = await UserServices.getAllTeams();
+    res.status(200).json(teams);
+  }
+)
