@@ -76,5 +76,54 @@ class ProjectServices {
     });
     return project;
   }
+  async getnotprojectTeams(projectId: string) {
+   const associatedTeams = await prisma.projectTeam.findMany({
+     where: { projectId },
+     select: { teamId: true },
+   });
+   const associatedTeamIds = associatedTeams.map(
+     (projectTeam) => projectTeam.teamId
+   );
+
+   const teamsNotInProject = await prisma.team.findMany({
+     where: {
+       id: {
+         notIn: associatedTeamIds,
+       },
+     },
+   });
+
+   return teamsNotInProject;
+  }
+
+  async getUserByprojectTeam (projectId: string) {
+    const associatedTeams = await prisma.projectTeam.findMany({
+      where: { projectId },
+      select: { teamId: true },
+    });
+    console.log(projectId);
+    const associatedTeamIds = associatedTeams.map(
+      (projectTeam) => projectTeam.teamId
+    );
+    const users = await prisma.user.findMany({
+      where: {
+        teamId: {
+          in: associatedTeamIds,
+        },
+      },
+      select: {
+        userName: true,
+        email: true,
+        userId: true,
+        profilePicture: true,
+        team: {
+          select: {
+            teamName: true,
+          },
+        },
+      },
+    });
+    return users
+  }
 }
 export default new ProjectServices()

@@ -31,12 +31,25 @@ export const createProject = catchAsyncError(
     });
     res.status(201).json(project);
     } catch (error) {
-      res.status(500).json({ message: "something went wrong",error });
+     return next(new ErrorHandler("something went wrong", 500));
     }
     
   }
 );
-
+export const getNotProjectTeams = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { projectId } = req.query;
+    if(!projectId){
+      return next(new ErrorHandler("projectId is required", 400));
+    }
+    try {
+      const project = await ProjectServices.getnotprojectTeams(projectId as string);
+      res.status(201).json(project);
+    } catch (error) {
+      return next(new ErrorHandler("something went wrong", 500));
+    }
+  }
+)
 export const addTeamsToProject = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const { projectId, teamIds } = req.body;
@@ -44,7 +57,22 @@ export const addTeamsToProject = catchAsyncError(
       const project = await ProjectServices.addTeamsToProject(projectId, teamIds);
       res.status(201).json(project);
     } catch (error) {
-      res.status(500).json({ message: "something went wrong",error });
+      return next(new ErrorHandler("something went wrong", 500));
+    }
+  }
+);
+
+export const getUsersByProject = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { projectId } = req.query;
+    if (!projectId) {
+      return next(new ErrorHandler("projectId is required", 400));
+    }
+    try {
+      const project = await ProjectServices.getUserByprojectTeam(projectId as string);
+      res.status(200).json(project);
+    } catch (error) {
+      return next(new ErrorHandler("something went wrong", 500));
     }
   }
 );

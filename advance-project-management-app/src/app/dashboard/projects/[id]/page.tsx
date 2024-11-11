@@ -6,6 +6,7 @@ import ListView from "../ListView";
 import Timeline from "../TimelineView";
 import TableView from "../TableView";
 import NewTaskModal from "@/app/components/modal/NewTaskModal";
+import ProjectSettings from "../settings/Index";
 
 type Props = {
   params: {
@@ -42,6 +43,9 @@ const page = ({ params }: Props) => {
       )}
       {isActiveTab === "Table" && (
         <TableView id={id} setIsModalNewTaskOpen={setIsModelNewTaskOpen} />
+      )}
+      {isActiveTab === "Settings" && (
+        <ProjectSettings id={id} setIsModalNewTaskOpen={setIsModelNewTaskOpen} />
       )}
     </>
   );

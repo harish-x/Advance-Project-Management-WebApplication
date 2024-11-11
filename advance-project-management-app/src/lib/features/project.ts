@@ -1,3 +1,4 @@
+import { Team, User } from "./auth";
 import { reAuthQuery } from "./authQuery";
 import { searchResults } from "./task";
 
@@ -29,6 +30,12 @@ export const ProjectAPi = reAuthQuery.injectEndpoints({
     searchProjects: builder.query<searchResults, string>({
       query: (query) => `/search/projects?query=${query}`,
     }),
+    getNotProjectTeams: builder.query<Team[], string>({
+      query: (projectId) => `project/getNotProjectTeams?projectId=${projectId}`,
+    }),
+    getProjectMembers: builder.query<User[], string>({
+      query: (projectId) => `project/getprojectUsers?projectId=${projectId}`,
+    }),
     inviteTeams: builder.mutation({
       query: (data) => ({
         url: "project/inviteTeam",
@@ -39,4 +46,4 @@ export const ProjectAPi = reAuthQuery.injectEndpoints({
   }),
 });
 
-export const { useGetProjectsQuery, useCreateProjectMutation, useSearchProjectsQuery, useInviteTeamsMutation} = ProjectAPi
+export const { useGetProjectsQuery, useCreateProjectMutation, useSearchProjectsQuery, useInviteTeamsMutation,useGetNotProjectTeamsQuery,useGetProjectMembersQuery} = ProjectAPi

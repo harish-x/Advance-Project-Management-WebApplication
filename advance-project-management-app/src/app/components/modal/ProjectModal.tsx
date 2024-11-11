@@ -63,9 +63,10 @@ const NewProjectModal = ({ children, isOpen, onClose }: Props) => {
       .then((data) => {
         toast({ title: "Project created successfully" });
         onClose();
-      }).catch((error) => {
-        toast({ title: error.data.message, variant: "destructive" });
       })
+      .catch((error) => {
+        toast({ title: error.data.message, variant: "destructive" });
+      });
   }
 
   return (
@@ -78,46 +79,59 @@ const NewProjectModal = ({ children, isOpen, onClose }: Props) => {
           </DialogHeader>
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 ">
-              <Input
-                id="name"
-                name="name"
-                required
-                placeholder="Project Name"
-                className="w-full col-span-3"
-                value={data.name}
-                onChange={handleChange}
-              />
-
-              <Input
-                id="username"
-                name="desc"
-                placeholder="Description"
-                className="col-span-3"
-                value={data.desc}
-                onChange={handleChange}
-              />
-
-              <Input
-                id="desc"
-                name="clientName"
-                placeholder="client Name"
-                className="col-span-3"
-                value={data.clientName}
-                onChange={handleChange}
-              />
-
-              <Input
-                id="price"
-                name="price"
-                type="number"
-                placeholder="Price"
-                className="col-span-3"
-                value={data.price}
-                onChange={handleChange}
-              />
+              <div>
+                <label className="text-secondary text-sm" htmlFor="name">
+                  Project name
+                </label>
+                <Input
+                  id="name"
+                  name="name"
+                  required
+                  className="w-full col-span-3"
+                  value={data.name}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label className="text-secondary text-sm" htmlFor="desc">
+                  Description
+                </label>
+                <Input
+                  id="desc"
+                  name="desc"
+                  className="col-span-3"
+                  value={data.desc}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label className="text-secondary text-sm" htmlFor="clientName">
+                  Client name
+                </label>
+                <Input
+                  id="clientName"
+                  name="clientName"
+                  className="col-span-3"
+                  value={data.clientName}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label className="text-secondary text-sm" htmlFor="price">
+                  Price
+                </label>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  className="col-span-3"
+                  value={data.price}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
             <div className="w-full flex flex-col">
-              <span className="text-secondary font-sm py-2">
+              <span className="text-secondary font-sm pt-3">
                 Pick start date to due date
               </span>
               <Popover>
@@ -161,7 +175,7 @@ const NewProjectModal = ({ children, isOpen, onClose }: Props) => {
               </Popover>
             </div>
             <DialogFooter className="mt-2">
-              <Button type="submit" variant={"secondary"}>
+              <Button type="submit" className="w-full mt-2"  variant={"secondary"}>
                 Create Project
               </Button>
             </DialogFooter>

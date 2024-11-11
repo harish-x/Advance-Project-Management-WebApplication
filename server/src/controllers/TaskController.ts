@@ -31,7 +31,7 @@ export const createTask = catchAsyncError(
       assignedUserID,
       name,
     } = req.body;
-    if (!title || !description) {
+    if (!title || !assignedUserID || !authorUserId) {
       return next(new ErrorHandler("title and description are required", 400));
     }
     const task = await TaskServices.createTask({

@@ -1,41 +1,15 @@
 "use client";
 import Header from "@/app/components/Header";
 import { Input } from "@/components/ui/input";
-import {
-  ClockIcon,
-  FilterIcon,
-  FolderPlus,
-  Grid3X3,
-  KanbanIcon,
-  KanbanSquare,
-  List,
-  MailPlus,
-  PlusSquareIcon,
-  Share2Icon,
-  Table,
-} from "lucide-react";
+import { ClockIcon, FilterIcon, FolderPlus, KanbanSquare, List, MailPlus, Settings, Share2Icon, Table, } from "lucide-react";
 import React from "react";
 import ModalNewProject from "@/app/components/modal/ProjectModal";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
-
 import { cn } from "@/lib/utils";
-
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useGetAllTeamsQuery } from "@/lib/features/auth";
-import { useInviteTeamsMutation } from "@/lib/features/project";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger, } from "@/components/ui/popover";
+import { useGetNotProjectTeamsQuery, useInviteTeamsMutation, } from "@/lib/features/project";
 import { useToast } from "@/hooks/use-toast";
 
 type Props = {
@@ -48,9 +22,9 @@ const ProjectHeader = (props: Props) => {
   const [isModelNewTaskOpen, setIsModelNewTaskOpen] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState<number>();
-  const { data: teams } = useGetAllTeamsQuery();
   const [inviteTeams] = useInviteTeamsMutation();
-const {toast} = useToast();
+  const { data: teams } = useGetNotProjectTeamsQuery(props.projectID);
+  const { toast } = useToast();
   async function onHandleInviteTeam(value: string) {
     setValue(Number(value));
     setOpen(false);
@@ -91,7 +65,7 @@ const {toast} = useToast();
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
                   <Command>
-                    <CommandInput placeholder="Search framework..." />
+                    <CommandInput placeholder="Search Teams..." />
                     <CommandList>
                       <CommandEmpty>No Teams found</CommandEmpty>
                       <CommandGroup>
@@ -142,6 +116,12 @@ const {toast} = useToast();
           <TabButton
             name="Table"
             icon={<Table className="h-5 w-5" />}
+            activeTab={props.isActiveTab}
+            setActiveTab={props.setIsActiveTab}
+          />
+          <TabButton
+            name="Settings"
+            icon={<Settings className="h-5 w-5" />}
             activeTab={props.isActiveTab}
             setActiveTab={props.setIsActiveTab}
           />

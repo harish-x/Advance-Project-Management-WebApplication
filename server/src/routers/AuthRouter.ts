@@ -26,6 +26,6 @@ router.route("/verifyotp").post(verifyOtp);
 router.route("/forgotpassword").post(forgotPassword);
 router.route("/resetpassword/:resetToken").post(resetPassword);
 
-router.route('/getallusers').get(getAllusers);
-router.route('/getAllTeams').get(getAllTeam)
+router.route('/getallusers').get(isAuthenticatedUser,getAllusers);
+router.route('/getAllTeams').get(isAuthenticatedUser,getAllTeam)
 export default router;
