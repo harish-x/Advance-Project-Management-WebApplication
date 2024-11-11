@@ -3,7 +3,7 @@ import Spinner from "@/app/components/Spinner";
 import TaskCard from "@/app/components/tasks/TaskCard";
 import { Button } from "@/components/ui/button";
 import { Task as TaskType, useGetAllTasksQuery } from "@/lib/features/task";
-import { ClipboardPlus, PlusSquareIcon } from "lucide-react";
+import { ClipboardPlus } from "lucide-react";
 import React from "react";
 
 type Props = {
@@ -21,7 +21,7 @@ const ListView = ({ id, setIsModalNewTaskOpen }: Props) => {
 
   if (isLoading) return <Spinner />;
 
-  if (isError) return <div>Error</div>;
+  if (isError) return <div className="w-full h-screen flex justify-center items-center text-destructive">Error</div>;
 
   if (isSuccess) {
     return (

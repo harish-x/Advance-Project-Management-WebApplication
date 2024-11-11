@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useCheckUserQuery } from "@/lib/features/auth";
-import { useRouter } from "next/navigation"; // Import useRouter for redirection
+import { useRouter } from "next/navigation";
 import Spinner from "../components/Spinner";
 
 interface UserContextType {

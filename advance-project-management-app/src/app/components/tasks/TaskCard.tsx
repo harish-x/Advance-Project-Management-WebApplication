@@ -31,20 +31,7 @@ const TaskCard = ({ task, setIsModalNewTaskOpen }: Props) => {
           : "bg-backgroundfw text-white "
       } `}
     >
-      {task.attachments && task.attachments.length > 0 && (
-        <div>
-          <strong>Attachments:</strong>{" "}
-          <div className="flex flex-wrap">
-            <Image
-              src={`${task.attachments[0].fileUrl}`}
-              alt={`${task.attachments[0].fileName}`}
-              width={400}
-              height={200}
-              className="h-auto w-full rounded-md"
-            />
-          </div>
-        </div>
-      )}
+      
       <p>
         <strong>Task: </strong> {task.title}
       </p>

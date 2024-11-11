@@ -2,26 +2,9 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 class ProjectServices {
-  async createProject({
-    name,
-    desc,
-    startDate,
-    finishedDate,
-    teamId,
-  }: {
-    name: string;
-    desc: string;
-    startDate: Date;
-    finishedDate: Date;
-    teamId: number;
-  }) {
+  async createProject({ name, desc, startDate, finishedDate, teamId, }: { name: string; desc: string; startDate: Date; finishedDate: Date; teamId: number; }) {
     const project = await prisma.project.create({
-      data: {
-        name,
-        desc,
-        startDate,
-        finishedDate,
-      },
+      data: { name, desc, startDate, finishedDate, }
     });
 
     await prisma.projectTeam.create({
@@ -37,6 +20,13 @@ class ProjectServices {
       where: {
         id: projectId,
       },
+      include: {
+        projectTeams: {
+          include: {
+            team: true,
+          },
+        }
+      }
     });
     return project;
   }
@@ -124,6 +114,13 @@ class ProjectServices {
       },
     });
     return users
+  }
+  deleteProject(projectId: string) {
+    return prisma.project.delete({
+      where: {
+        id: projectId,
+      },
+    });
   }
 }
 export default new ProjectServices()

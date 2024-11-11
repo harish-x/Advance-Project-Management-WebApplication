@@ -62,6 +62,21 @@ export const addTeamsToProject = catchAsyncError(
   }
 );
 
+export const getProject = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { projectId } = req.query;
+    if (!projectId) {
+      return next(new ErrorHandler("projectId is required", 400));
+    }
+    try {
+      const project = await ProjectServices.findProjectById(projectId as string);
+      res.status(200).json(project);
+    } catch (error) {
+      return next(new ErrorHandler("something went wrong", 500));
+    }
+  }
+);
+
 export const getUsersByProject = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const { projectId } = req.query;
@@ -70,6 +85,21 @@ export const getUsersByProject = catchAsyncError(
     }
     try {
       const project = await ProjectServices.getUserByprojectTeam(projectId as string);
+      res.status(200).json(project);
+    } catch (error) {
+      return next(new ErrorHandler("something went wrong", 500));
+    }
+  }
+);
+
+export const deleteProject = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { projectId } = req.params;
+    if (!projectId) {
+      return next(new ErrorHandler("projectId is required", 400));
+    }
+    try {
+      const project = await ProjectServices.deleteProject(projectId as string);
       res.status(200).json(project);
     } catch (error) {
       return next(new ErrorHandler("something went wrong", 500));
