@@ -2,6 +2,7 @@ import { use } from "react";
 import { reAuthQuery } from "./authQuery";
 import { url } from "inspector";
 import { searchResults } from "./task";
+import { logOut } from "../state";
 
 export interface User {
   userId: string;
@@ -77,6 +78,13 @@ export const authApiSlice = reAuthQuery.injectEndpoints({
     getAllTeams: builder.query<Team[], void>({
       query: () => `/auth/getAllTeams`,
     }),
+    logOut: builder.mutation({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+        body: {},
+      })
+    })
   }),
 });
 
@@ -90,5 +98,6 @@ export const {
   useResetPasswordMutation,
   useSearchUsersQuery,
   useGetAllEmployesQuery,
-  useGetAllTeamsQuery
+  useGetAllTeamsQuery,
+  useLogOutMutation
 } = authApiSlice;

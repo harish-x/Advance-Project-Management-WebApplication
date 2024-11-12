@@ -1,45 +1,21 @@
 import React, { useContext, useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { addDays, format } from "date-fns";
-import { Calendar as CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
+import { Calendar as CalendarIcon, Check } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger, } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
 import Spinner from "../Spinner";
 import { useUserContext } from "@/app/dashboard/UserContext";
 import { useCreateTaskMutation } from "@/lib/features/task";
 import { Status } from "@/lib/features/task";
 import { Priority } from "@/lib/features/task";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, } from "@/components/ui/command";
 import { useGetProjectMembersQuery } from "@/lib/features/project";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 

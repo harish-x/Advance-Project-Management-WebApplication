@@ -1,73 +1,45 @@
 "use client";
-import {
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuBadge,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  SidebarSeparator,
-} from "@/components/ui/sidebar";
-import { Collapsible } from "@radix-ui/react-collapsible";
-import {
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@radix-ui/react-dropdown-menu";
-import {
-  Users,
-  User,
-  ChevronUp,
-  FolderKanban,
-  Settings,
-  Activity,
-  UserRound,
-  Search,
-} from "lucide-react";
 import React from "react";
+import { CollapsibleContent, CollapsibleTrigger, } from "@/components/ui/collapsible";
+import { DropdownMenu, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from "@/components/ui/alert-dialog";
+import { Collapsible } from "@radix-ui/react-collapsible";
+import { DropdownMenuContent, DropdownMenuItem, } from "@radix-ui/react-dropdown-menu";
+import { Users, User, ChevronUp, FolderKanban, Settings, Activity, UserRound, Search, FolderSymlink, Folder, } from "lucide-react";
 import { useGetProjectsQuery } from "@/lib/features/project";
 import { Project as ptojectsInterface } from "@/lib/features/project";
 import Spinner from "./Spinner";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-
+import { useUserContext } from "@/app/dashboard/UserContext";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {};
 
 const Leftbar = (props: Props) => {
   const {
-    isError,
     isLoading,
-    isSuccess,
     data: projects,
   } = useGetProjectsQuery();
   const pathname = usePathname();
-const router = useRouter()
+  const router = useRouter();
+    const { userData, isLoading: isUserLoading } = useUserContext();
 
   return (
     <div>
       <Sidebar className=" py-2">
         <SidebarHeader>
-          <SidebarMenuBadge>Team Lead</SidebarMenuBadge>
+          <SidebarMenuBadge>
+            {(userData?.role as string)?.toUpperCase()}
+          </SidebarMenuBadge>
         </SidebarHeader>
         {/* //*******************group 1****************************** */}
         <SidebarContent>
           <SidebarGroup className="mt-2">
             <div className="border border-dotted rounded p-2 flex justify-around">
-              <p className="font-semibold">Developers</p>
+              <p className="font-semibold">{userData?.team?.teamName}</p>
               <Users />
             </div>
           </SidebarGroup>
@@ -92,12 +64,13 @@ const router = useRouter()
                         projects?.map((item: ptojectsInterface) => (
                           <SidebarMenuSubItem key={item.id}>
                             <SidebarMenuSubButton
+                              className="py-2"
                               href={`/dashboard/projects/${item.id}`}
                               isActive={
                                 pathname === `/dashboard/projects/${item.id}`
                               }
                             >
-                              {item.name}
+                              <Folder /> {item.name}
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ))
@@ -140,7 +113,12 @@ const router = useRouter()
             <SidebarMenuButton className="mt-3">
               <div className=" flex items-center px-2 space-x-5">
                 <Settings />
-                <p className="font-semibold">Settings</p>
+                <p
+                  className="font-semibold"
+                  onClick={() => router.push("/dashboard/settings")}
+                >
+                  Settings
+                </p>
               </div>
             </SidebarMenuButton>
           </SidebarGroup>
@@ -153,22 +131,44 @@ const router = useRouter()
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton>
-                    <User /> Username
+                    <User /> {userData?.userName}
                     <ChevronUp className="ml-auto" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   side="top"
-                  className="w-[--radix-popper-anchor-width]"
+                  className="w-[--radix-popper-anchor-width] bg-backgroundfw rounded-md"
                 >
                   <DropdownMenuItem>
-                    <span>Account</span>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button className="w-full" variant={"ghost"}>
+                          Logout
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="text-secondary">
+                            Are you absolutely sure to logout
+                          </AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction>Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </DropdownMenuItem>
+                  <Separator className="w-[90%] border-secondary/20 mx-auto" />
+                  <DropdownMenuItem></DropdownMenuItem>
                   <DropdownMenuItem>
-                    <span>Billing</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <span>Sign out</span>
+                    <Button
+                      variant={"ghost"}
+                      className="w-full"
+                      onClick={() => router.push("/dashboard/settings")}
+                    >
+                      Account
+                    </Button>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

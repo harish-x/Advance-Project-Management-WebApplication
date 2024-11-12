@@ -67,6 +67,9 @@ class UserServices {
         userId: decode.userId,
         role: decode.userRole,
       },
+      include: {
+        team: true,
+      }
     });
     return user;
   }
@@ -92,6 +95,9 @@ class UserServices {
       where: {
         email,
       },
+      include: {
+        team: true,
+      }
     });
     if (!user) {
       return false;
