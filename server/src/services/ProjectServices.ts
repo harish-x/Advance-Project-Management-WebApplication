@@ -2,9 +2,25 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 class ProjectServices {
-  async createProject({ name, desc, startDate, finishedDate, teamId, }: { name: string; desc: string; startDate: Date; finishedDate: Date; teamId: number; }) {
+  async createProject({
+    name,
+    desc,
+    startDate,
+    DueDate,
+    teamId,
+    clientName,
+    price,
+  }: {
+    name: string;
+    desc: string;
+    startDate: Date;
+    DueDate: Date;
+    teamId: number;
+    clientName: string;
+    price: number;
+  }) {
     const project = await prisma.project.create({
-      data: { name, desc, startDate, finishedDate, }
+      data: { name, desc, startDate, DueDate, clientName, price },
     });
 
     await prisma.projectTeam.create({
@@ -25,12 +41,12 @@ class ProjectServices {
           include: {
             team: true,
           },
-        }
-      }
+        },
+      },
     });
     return project;
   }
-  async getAllProjects(teamId:number) {
+  async getAllProjects(teamId: number) {
     const projects = await prisma.project.findMany({
       where: {
         projectTeams: {
@@ -67,26 +83,26 @@ class ProjectServices {
     return project;
   }
   async getnotprojectTeams(projectId: string) {
-   const associatedTeams = await prisma.projectTeam.findMany({
-     where: { projectId },
-     select: { teamId: true },
-   });
-   const associatedTeamIds = associatedTeams.map(
-     (projectTeam) => projectTeam.teamId
-   );
+    const associatedTeams = await prisma.projectTeam.findMany({
+      where: { projectId },
+      select: { teamId: true },
+    });
+    const associatedTeamIds = associatedTeams.map(
+      (projectTeam) => projectTeam.teamId
+    );
 
-   const teamsNotInProject = await prisma.team.findMany({
-     where: {
-       id: {
-         notIn: associatedTeamIds,
-       },
-     },
-   });
+    const teamsNotInProject = await prisma.team.findMany({
+      where: {
+        id: {
+          notIn: associatedTeamIds,
+        },
+      },
+    });
 
-   return teamsNotInProject;
+    return teamsNotInProject;
   }
 
-  async getUserByprojectTeam (projectId: string) {
+  async getUserByprojectTeam(projectId: string) {
     const associatedTeams = await prisma.projectTeam.findMany({
       where: { projectId },
       select: { teamId: true },
@@ -113,14 +129,31 @@ class ProjectServices {
         },
       },
     });
-    return users
+    return users;
   }
-  deleteProject(projectId: string) {
+  async deleteProject(projectId: string) {
     return prisma.project.delete({
       where: {
         id: projectId,
       },
     });
   }
+  async updateProject({ projectId, name, desc, DueDate, finishedDate, status, clientName, price, }: { projectId: string; name: string; desc: string; DueDate: Date; finishedDate: Date; status: string; clientName: string; price: number; }) {
+    return prisma.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        name,
+        desc,
+        DueDate,
+        finishedDate,
+        status,
+        clientName,
+        price,
+      },
+    });
+  }
+
 }
-export default new ProjectServices()
+export default new ProjectServices();

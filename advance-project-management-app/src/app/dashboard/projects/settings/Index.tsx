@@ -36,8 +36,8 @@ const ProjectSettings = (props: Props) => {
       .then(() => route.push("/dashboard"));
   }
   return (
-      <>
-          <EditProjectModal isOpen={open} onClose={() => setOpen(false)}/>
+    <>
+      <EditProjectModal isOpen={open} onClose={() => setOpen(false)} project={ project} />
       <div className="bg-backgroundfw rounded-md mt-5">
         <h1 className="font-semibold text-xl px-4 py-2">Project Settings</h1>
         <div className="flex justify-between items-center px-5 py-5">
@@ -92,7 +92,9 @@ const ProjectSettings = (props: Props) => {
           </div>
 
           <div className="space-x-2 self-start">
-            <Button variant="outline" onClick={() => setOpen(true)}>Edit</Button>
+            <Button variant="outline" onClick={() => setOpen(true)}>
+              Edit
+            </Button>
             <AlertDialog>
               <AlertDialogTrigger>
                 <Button variant="destructive">Delete</Button>

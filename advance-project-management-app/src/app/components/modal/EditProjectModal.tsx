@@ -9,29 +9,35 @@ import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger, } from "@/components/ui/popover";
-import { useCreateProjectMutation } from "@/lib/features/project";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue, } from "@/components/ui/select";
+
+import { useUpdateProjectMutation } from "@/lib/features/project";
 import { useToast } from "@/hooks/use-toast";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   name?: string;
+  project: any;
 };
 
-const EditProjectModal = ({isOpen, onClose }: Props) => {
+const EditProjectModal = ({isOpen, onClose,project }: Props) => {
   const { toast } = useToast();
   const [data, setdata] = useState({
-    name: "",
-    desc: "",
-    clientName: "",
-    price: 0,
+    name: project?.name,
+    desc: project?.desc,
+    clientName: project?.clientName,
+    price: project?.price as number,
   });
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(Date.now()),
-    to: addDays(new Date(Date.now()), 5),
-  });
+  console.log(project)
+  const [DueDate, setDueDate] = React.useState<Date>(
+    project?.DueDate as Date
+  );
+  const [finishedDate, setfinishedDate] = React.useState<Date>(
+    project?.finishedDate as Date );
+  const [status, setStatus] = React.useState(project?.status);
 
-  const [createProject] = useCreateProjectMutation();
+  const [updateProject] = useUpdateProjectMutation();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setdata((prev) => ({ ...prev, [name]: value }));
@@ -39,12 +45,8 @@ const EditProjectModal = ({isOpen, onClose }: Props) => {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(isOpen);
-
-    if (!date) {
-      return;
-    }
-    await createProject({ ...data, startDate: date.from, DueDate: date?.to })
+   
+    await updateProject({ ...data, DueDate,finishedDate, status, projectId: project?.id })
       .unwrap()
       .then((data) => {
         toast({ title: "Project created successfully" });
@@ -116,46 +118,79 @@ const EditProjectModal = ({isOpen, onClose }: Props) => {
                 />
               </div>
             </div>
+            <div className="mt-3">
+              <label className="text-secondary text-sm">Status</label>
+              <Select>
+                <SelectTrigger className="w-full text-white">
+                  <SelectValue placeholder="Edit Status " />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Project Status</SelectLabel>
+                    <SelectItem value="on going">on going</SelectItem>
+                    <SelectItem value="hold">hold</SelectItem>
+                    <SelectItem value="pending">pending</SelectItem>
+                    <SelectItem value="finished">finished</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="w-full flex flex-col">
-              <span className="text-secondary font-sm pt-3">
-                Pick start date to due date
-              </span>
+              <span className="text-secondary font-sm pt-3">Edit due date</span>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
-                    id="date"
                     variant={"outline"}
                     className={cn(
                       "w-full justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
+                      !DueDate && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon />
-                    {date?.from ? (
-                      date.to ? (
-                        <>
-                          {format(date.from, "LLL dd, y")} -{" "}
-                          {format(date.to, "LLL dd, y")}
-                        </>
-                      ) : (
-                        format(date.from, "LLL dd, y")
-                      )
+                    {DueDate ? (
+                      format(DueDate, "PPP")
                     ) : (
                       <span>Pick a date</span>
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent
-                  className="w-auto border-white/40 p-0"
-                  align="start"
-                >
+                <PopoverContent className="w-auto p-0">
                   <Calendar
+                    mode="single"
+                    selected={DueDate}
+                    onSelect={(day)=>setDueDate(day as Date)}
                     initialFocus
-                    mode="range"
-                    defaultMonth={date?.from}
-                    selected={date}
-                    onSelect={setDate}
-                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="w-full flex flex-col">
+              <span className="text-secondary font-sm pt-3">
+                Edit finished date
+              </span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !finishedDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon />
+                    {finishedDate ? (
+                      format(finishedDate, "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={finishedDate}
+                    onSelect={(day)=>setfinishedDate(day as Date)}
+                    initialFocus
                   />
                 </PopoverContent>
               </Popover>
@@ -166,7 +201,7 @@ const EditProjectModal = ({isOpen, onClose }: Props) => {
                 className="w-full mt-2"
                 variant={"secondary"}
               >
-                Create Project
+                Update Project
               </Button>
             </DialogFooter>
           </form>

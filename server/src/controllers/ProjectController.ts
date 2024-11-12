@@ -17,18 +17,20 @@ export const getProjects = catchAsyncError(
 
 export const createProject = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, desc, startDate, finishedDate, teamId } = req.body;
+    const { name, desc, startDate, DueDate,  clientName,price } = req.body;
     if (!name || !desc) {
       return next(new ErrorHandler("name and desc are required", 400));
     }
     try {
       const project = await ProjectServices.createProject({
-      name,
-      desc,
-      startDate,
-      finishedDate,
-      teamId,
-    });
+        name,
+        desc,
+        startDate,
+        DueDate,
+        teamId:req.user?.teamId as number,
+        clientName,
+        price
+      });
     res.status(201).json(project);
     } catch (error) {
      return next(new ErrorHandler("something went wrong", 500));
@@ -100,6 +102,24 @@ export const deleteProject = catchAsyncError(
     }
     try {
       const project = await ProjectServices.deleteProject(projectId as string);
+      res.status(200).json(project);
+    } catch (error) {
+      return next(new ErrorHandler("something went wrong", 500));
+    }
+  }
+);
+
+
+export const updateProject = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { projectId } = req.params;
+    const { name, desc, DueDate, finishedDate, status, clientName, price } =
+      req.body;
+    if (!projectId) {
+      return next(new ErrorHandler("projectId is required", 400));
+    }
+    try {
+      const project = await ProjectServices.updateProject({projectId, name, desc, DueDate, finishedDate, status, clientName, price});
       res.status(200).json(project);
     } catch (error) {
       return next(new ErrorHandler("something went wrong", 500));

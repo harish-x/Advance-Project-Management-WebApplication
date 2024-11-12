@@ -51,8 +51,15 @@ export const ProjectAPi = reAuthQuery.injectEndpoints({
         url: `project/delete/${projectId}`,
         method: "DELETE",
       }),
-    })
+    }),
+    updateProject: builder.mutation({
+      query: (data) => ({
+        url: `project/update/${data.projectId}`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useGetProjectsQuery, useCreateProjectMutation, useSearchProjectsQuery, useInviteTeamsMutation,useGetNotProjectTeamsQuery,useGetProjectMembersQuery,useGetProjectQuery,useDeleteProjectMutation} = ProjectAPi
+export const { useGetProjectsQuery, useCreateProjectMutation, useSearchProjectsQuery, useInviteTeamsMutation,useGetNotProjectTeamsQuery,useGetProjectMembersQuery,useGetProjectQuery,useDeleteProjectMutation,useUpdateProjectMutation} = ProjectAPi
