@@ -92,6 +92,13 @@ class getAllTasks {
         assignedUserID,
       },
     });
+
+    await prisma.taskAssignment.create({
+      data: {
+        taskId: task.id,
+        userId: authorUserId,
+      },
+    });
     return task;
   }
 
@@ -257,6 +264,18 @@ class getAllTasks {
       },
     });
     return comment;
+  }
+
+  async getTaskByUserId(userId: string) {
+    const tasks = await prisma.task.findMany({
+      where: {
+        assignedUserID: userId,
+      },
+      orderBy: {
+        dueDate: "desc",
+      },
+    });
+    return tasks;
   }
 }
 

@@ -127,7 +127,7 @@ const EditProjectModal = ({isOpen, onClose,project }: Props) => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Project Status</SelectLabel>
-                    <SelectItem value="on going">on going</SelectItem>
+                    <SelectItem value="onGoing">on going</SelectItem>
                     <SelectItem value="hold">hold</SelectItem>
                     <SelectItem value="pending">pending</SelectItem>
                     <SelectItem value="finished">finished</SelectItem>

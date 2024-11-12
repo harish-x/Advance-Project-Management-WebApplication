@@ -8,6 +8,7 @@ import {
   getAttachments,
   getComments,
   getSingleTask,
+  getTaskbyUserId,
   getTasks,
   updateTask,
 } from "../controllers/TaskController";
@@ -35,5 +36,7 @@ router
 router
   .route("/attachment/:attachmentId")
   .delete(isAuthenticatedUser, deleteAttachments);
+
+router.route("/gettasks/:userId").get( getTaskbyUserId);
 
 export default router;

@@ -101,6 +101,9 @@ export const TaskApi = reAuthQuery.injectEndpoints({
       }),
       invalidatesTags: ["Task"],
     }),
+    getTaskByUser: builder.query<Task[], string>({
+      query: (userId) => `/task/gettasks/${userId}`,
+    }),
 
     searchTasks: builder.query<searchResults, string>({
       query: (query) => `/search/tasks?query=${query}`,
@@ -178,5 +181,6 @@ export const {
   useCreateAttachmentsMutation,
   useGetAttachmentsQuery,
   useDeleteAttachmentsMutation,
-  useDeleteCommentsMutation
+  useDeleteCommentsMutation,
+  useGetTaskByUserQuery
 } = TaskApi;

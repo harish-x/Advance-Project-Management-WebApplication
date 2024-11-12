@@ -7,7 +7,7 @@ import { uploadImagesToAzure } from "../middlewares/FileUpload";
 export const getTasks = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const projectId = req.query.projectId as string;
-    const tasks = await TaskServices.getAllTasks(projectId);
+    const tasks = await TaskServices.getTaskByUserId(projectId);
     if (!tasks) {
       return next(new ErrorHandler("task not found", 404));
     }
@@ -199,5 +199,19 @@ export const deleteAttachments = catchAsyncError(
       return next(new ErrorHandler("attachment not found", 404));
     }
     res.status(200).json({ message: "attachment deleted successfully" });
+  }
+);
+
+export const getTaskbyUserId = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.params;
+    if (!userId) {
+      return next(new ErrorHandler("userId is required", 400));
+    }
+    const tasks = await TaskServices.getTaskByUserId(userId);
+    if (!tasks) {
+      return next(new ErrorHandler("task not found", 404));
+    }
+    res.status(200).json(tasks);
   }
 );
