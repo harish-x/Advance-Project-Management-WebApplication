@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import StoreProvider from "./redux";
+import StoreProvider from "@/app/store/redux";
 
 type Props = {};
 

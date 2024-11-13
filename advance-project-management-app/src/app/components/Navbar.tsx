@@ -38,49 +38,7 @@ const Navbar = (props: Props) => {
             </svg>
           </button>
           <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border  rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 ">
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 px-3 text-white   md:p-0 "
-                  aria-current="page"
-                >
-                  Home
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 px-3 text-gray-400 md:p-0  hover:text-white"
-                >
-                  About
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 px-3 text-gray-400 md:p-0  hover:text-white"
-                >
-                  Services
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 px-3 text-gray-400 md:p-0  hover:text-white"
-                >
-                  Pricing
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 px-3 text-gray-400 md:p-0  hover:text-white"
-                >
-                  Contact
-                </a>
-              </li>
-            </ul>
+            
           </div>
         </div>
       </nav>

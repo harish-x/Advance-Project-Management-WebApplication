@@ -4,7 +4,7 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background-color: #09090b;
+  background-color: hsl(var(--background));
 }
 
 @layer base {
@@ -17,7 +17,8 @@ body {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%; */
-    --sidebar-background: 240 5% 10% 1;
+
+    --sidebar-background: 240 8.32% 8.04%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -25,9 +26,79 @@ body {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+    --background: 240 8.32% 7.74%;
 
-  /* .dark {
+    --backgroundfw:33 33 38/1;
     
-  } */
+    --foreground: 0 0% 100%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --popover: 240 8.32% 8.04%;
+    --popover-foreground: 210 40% 96.1%;
+    --border: 214.3, 31.8%, 91.4%, 0.6;
+    --input: 214.3, 31.8%, 91.4%, 0.6;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+    --ring: 215 20.2% 65.1%;
+    --radius: 0.5rem;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 6.3% 56.9%;
+    --todo:#2563eb;
+    --wip:#059669;
+    --review:#9d7706;
+    --complete:#000000;
+  }
+}
+
+
+.timeline ._3_ygE {
+  @apply rounded-tl-md border border-r-0 border-[#e6e4e4] ;
+}
+.timeline ._2eZzQ {
+  @apply border-[#e6e4e4] ;
+}
+.timeline ._2dZTy {
+  @apply fill-backgroundfw;
+}
+.timeline ._2dZTy:nth-child(even) {
+  @apply fill-secondary ;
+}
+.timeline ._2q1Kt{
+  @apply fill-white
+}
+.timeline ._35nLX {
+  @apply fill-backgroundfw stroke-[#e6e4e4] ;
+}
+.timeline ._9w8d5 {
+  @apply fill-white ;
+}
+.timeline ._34SS0 {
+  @apply bg-backgroundfw ;
+}
+.timeline ._34SS0:nth-of-type(even) {
+  @apply bg-[#f5f5f5] ;
+}
+.timeline ._RuwuK,
+.timeline ._3rUKi,
+.timeline ._1rLuZ {
+  @apply stroke-[#e6e4e4] ;
+}
+.timeline ._3ZbQT {
+  @apply border-l-0 border-[#e6e4e4] ;
+}
+.timeline ._3T42e {
+  @apply bg-backgroundfw ;
+}
+.timeline ._29NTg {
+  @apply text-white;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
 }
