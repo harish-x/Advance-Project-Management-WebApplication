@@ -10,6 +10,7 @@ import TaskColumn from "@/app/components/tasks/TaskColumn";
 import Header from "@/app/components/Header";
 import { Button } from "@/components/ui/button";
 import { ClipboardPlus } from "lucide-react";
+import KanbanLoading from "@/app/components/loadings/kanbanLoading";
 type Props = {
   id: string;
   setIsModalNewTaskOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,7 +34,6 @@ const Board = ({ id, setIsModalNewTaskOpen }: Props) => {
     updateTask({ status: toStatus, taskId });
   };
 
-  if (isLoading || isLoadingUpdateTask) return <Spinner />;
   if (isError) return <div>Error</div>;
 
   return (
@@ -52,19 +52,23 @@ const Board = ({ id, setIsModalNewTaskOpen }: Props) => {
           }
         />
       </div>
-      <DndProvider backend={HTML5Backend}>
-        <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 xl:grid-cols-4">
-          {taskStatus.map((status) => (
-            <TaskColumn
-              key={status}
-              status={status}
-              moveTask={moveTask}
-              tasks={tasks || []}
-              setIsModalNewTaskOpen={setIsModalNewTaskOpen}
-            />
-          ))}
-        </div>
-      </DndProvider>
+      {isLoading || isLoadingUpdateTask ? (
+        <KanbanLoading />
+      ) : (
+        <DndProvider backend={HTML5Backend}>
+          <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 xl:grid-cols-4">
+            {taskStatus.map((status) => (
+              <TaskColumn
+                key={status}
+                status={status}
+                moveTask={moveTask}
+                tasks={tasks || []}
+                setIsModalNewTaskOpen={setIsModalNewTaskOpen}
+              />
+            ))}
+          </div>
+        </DndProvider>
+      )}
     </>
   );
 };

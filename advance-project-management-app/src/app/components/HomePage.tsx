@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, CalendarCheck2, CalendarClockIcon, CalendarDaysIcon } from "lucide-react";
 import TaskCard from "./tasks/TaskCard";
 import Link from "next/link";
+import TaskCardsLoading from "./loadings/TaskCardsLoading";
+import ProjectCardLoading from "./loadings/ProjectCardLoading";
 const HomePage = (props: Props) => {
   const { isLoading, data: projects } = useGetProjectsQuery();
   const { userData, isLoading: isUserLoading } = useUserContext();
@@ -40,7 +42,7 @@ const HomePage = (props: Props) => {
         <h1 className="text-2xl font-bold text-center">No projects found</h1>
       )}
       {isLoading ? (
-        <Spinner />
+       <ProjectCardLoading/>
       ) : (
         <>
           <div className="bg-backgroundfw rounded-md mt-5 p-5">
@@ -107,7 +109,7 @@ const HomePage = (props: Props) => {
         </>
       )}
       {istasksLoading ? (
-        <Spinner />
+       <TaskCardsLoading/>
       ) : (
         <>
           {

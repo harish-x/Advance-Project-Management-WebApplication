@@ -59,6 +59,7 @@ import { useRouter } from "next/navigation";
 import { useUserContext } from "@/app/dashboard/UserContext";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import SideBarLoading from "./loadings/sideBarLoading";
 
 type Props = {};
 
@@ -110,7 +111,7 @@ const Leftbar = (props: Props) => {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {isLoading ? (
-                        <Spinner />
+                       <SideBarLoading/>
                       ) : (
                         projects?.map((item: ptojectsInterface) => (
                           <SidebarMenuSubItem key={item.id}>

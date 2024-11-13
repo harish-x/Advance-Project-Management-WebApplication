@@ -14,6 +14,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import SideBarLoading from "@/app/components/loadings/sideBarLoading";
+import TableLoading from "@/app/components/loadings/TableLoading";
 
 type Props = {};
 
@@ -22,8 +24,8 @@ const page = (props: Props) => {
 
   if (isLoading) {
     return (
-      <div className="w-full h-screen flex justify-center items-center">
-        <Spinner />
+      <div className=" ">
+        <TableLoading/>
       </div>
     );
   }
