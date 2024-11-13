@@ -10,7 +10,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
       <SidebarProvider>
         <Leftbar />
         <main className="w-full">
-          <Navbar />
+          {/* <Navbar /> */}
           <div className="flex flex-col  sm:px-10 px-5">
             <SidebarTrigger />
             {children}

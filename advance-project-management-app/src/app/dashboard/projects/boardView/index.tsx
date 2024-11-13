@@ -25,6 +25,7 @@ const Board = ({ id, setIsModalNewTaskOpen }: Props) => {
     isSuccess,
     isLoading,
   } = useGetAllTasksQuery({ projectId: id });
+  console.log(tasks);
 
   const [updateTask, { isLoading: isLoadingUpdateTask }] =
     useUpdateTaskMutation();

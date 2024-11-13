@@ -7,7 +7,8 @@ import { uploadImagesToAzure } from "../middlewares/FileUpload";
 export const getTasks = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const projectId = req.query.projectId as string;
-    const tasks = await TaskServices.getTaskByUserId(projectId);
+    console.log(projectId);
+    const tasks = await TaskServices.getAllTasks(projectId);
     if (!tasks) {
       return next(new ErrorHandler("task not found", 404));
     }

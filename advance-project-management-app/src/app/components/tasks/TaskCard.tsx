@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 
 type Props = {
   task: TaskType;
-  setIsModalNewTaskOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsModalNewTaskOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const TaskCard = ({ task, setIsModalNewTaskOpen }: Props) => {

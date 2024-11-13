@@ -44,14 +44,14 @@ const Settings = (props: Props) => {
     await logoutfunc({})
       .unwrap()
       .then(() => {
-          router.push("/");
-          window.location.reload();
+        router.push("/");
+        window.location.reload();
       });
   }
   return (
     <div className="bg-backgroundfw p-5 rounded-md mt-4">
       <h1 className="text-2xl font-semibold text-center">Settings</h1>
-      <div className="h-1/4 w-1/4 mx-auto mt-2 flex flex-col items-center p-3">
+      <div className=" w-52 mx-auto mt-2 flex flex-col items-center p-3">
         <Avatar className="w-15 h-15">
           <AvatarImage src={userData?.profilePicture} alt="@shadcn" />
           <AvatarFallback>
@@ -63,7 +63,7 @@ const Settings = (props: Props) => {
         </Button>
       </div>
 
-      <div className="flex justify-between ">
+      <div className="flex justify-between px-10 ">
         <div>
           <form action="" className="space-y-2">
             <div className="flex  items-center gap-2">
