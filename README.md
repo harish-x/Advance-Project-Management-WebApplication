@@ -99,6 +99,7 @@ A powerful and flexible project management application built to help companies m
 1. **Dashboard**
    
    The Dashboard displays all the projects the user is involved in, along with all the tasks assigned to them. This view provides an overview of the user's current responsibilities and gives quick access to tasks within each project.
+   
     ![Create Next App - Google Chrome 13-11-2024 15_40_14](https://github.com/user-attachments/assets/68ee2141-8366-4822-ad67-60b5a3a06dd8)
 
 3. **Task Kanban Board**
