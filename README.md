@@ -94,6 +94,31 @@ A powerful and flexible project management application built to help companies m
    - `src/services/`: Contains database services for controller business logic.
    - `src/middlewares`: Contains middlewares
 
+## UI Screenshots
+
+1. **Dashboard**
+   
+   The Dashboard displays all the projects the user is involved in, along with all the tasks assigned to them. This view provides an overview of the user's current responsibilities and gives quick access to tasks within each project.
+    ![Create Next App - Google Chrome 13-11-2024 15_40_14](https://github.com/user-attachments/assets/68ee2141-8366-4822-ad67-60b5a3a06dd8)
+
+3. **Task Kanban Board**
+   
+   The Task Kanban Board allows users to manage tasks using a flexible Kanban-style board. The board offers 4 views to suit different needs:
+
+      - **Kanban View**: A visual board showing tasks in columns based on their status.
+      - **List View**: A simplified list of tasks.
+      - **Table View**: Displays tasks in a tabular format with sortable columns.
+      - **Timeline View**: A Gantt-style timeline view showing tasks over time.
+        
+      ![Create Next App - Google Chrome 13-11-2024 15_40_43](https://github.com/user-attachments/assets/158a8781-f32b-45bb-b305-35ba2166db9b)
+
+
+4. **Task Details Modal**
+   
+      The Task Details Modal provides in-depth information about a specific task. This modal displays attachments, comments, issues, and all other task-specific details, giving users a comprehensive view of the task's current state and collaboration context.
+
+      ![Create Next App - Google Chrome 13-11-2024 15_40_51](https://github.com/user-attachments/assets/f820f9fb-6ae3-4077-b891-e2b5cb52c634)
+
 
  ## API Endpoints
 
